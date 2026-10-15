@@ -52,7 +52,7 @@ const Form: React.FC<Props> = ({ name, companyUID, fields, setFields, selectedDa
         if (targetName === '97264') {
             // Time -> update time from date
             let tripDate: Date = fields.find((o: any) => o.name === '16538').value
-            if (tripDate) {
+            if (tripDate instanceof Date && targetValue) {
                 tripDate.setHours(targetValue.getHours())
                 tripDate.setMinutes(targetValue.getMinutes())
                 tripDate.setSeconds(targetValue.getSeconds())
@@ -65,7 +65,7 @@ const Form: React.FC<Props> = ({ name, companyUID, fields, setFields, selectedDa
             if (field.name === '97264' && targetName === '16538') {
                 // Date : Time -> update time from date
                 let tripTime: Date = field.value
-                if (tripTime) {
+                if (tripTime instanceof Date && targetValue) {
                     targetValue.setHours(tripTime.getHours())
                     targetValue.setMinutes(tripTime.getMinutes())
                     targetValue.setSeconds(tripTime.getSeconds())

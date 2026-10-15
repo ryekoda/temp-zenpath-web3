@@ -1,5 +1,4 @@
-import dayjs from 'dayjs';
-import { ParseDate } from '@/lib/format/dates';
+import { ParseTime } from '@/lib/format/dates';
 
 
 
@@ -12,12 +11,8 @@ function PickupMinutes(trip: any): number | null {
     const value = trip?.[PICKUP_TIME] ?? trip?.pickupTime
     if (value === undefined || value === null || value === '') return null
 
-    // Short strings are a time of day on their own ('14:30'); anything else is a full date/time
-    const time = typeof value === 'string' && value.length <= 15
-        ? dayjs(`2023-04-13 ${value}`)
-        : dayjs(ParseDate(value) ?? undefined)
-
-    return time.isValid() ? time.hour() * 60 + time.minute() : null
+    const time = ParseTime(value)
+    return time ? time.getHours() * 60 + time.getMinutes() : null
 }
 
 // The manifest's default order: earliest pickup first. Trips without a time go last;

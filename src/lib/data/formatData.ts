@@ -1,5 +1,4 @@
-import dayjs from 'dayjs';
-import { FormatDate, TimeConverter, UTCTimeToLocalTime } from '@/lib/format/dates';
+import { FormatDate, ParseTime, TimeConverterFromDate } from '@/lib/format/dates';
 import { FormatPhoneNumber } from '@/lib/format/phone';
 import { CapitalizeFirstLetterOfEachWord } from '@/lib/format/text';
 
@@ -11,13 +10,10 @@ export function FormatData(type: string, data: any): any {
         case 'phone':
             return data ? FormatPhoneNumber(data) : '';
 
-        case 'time':
-            if (typeof data === 'string') {
-                return data.length > 15
-                    ? TimeConverter(dayjs(data).toDate())
-                    : TimeConverter(dayjs(`2023-04-13 ${data}`).toDate());
-            }
-            return data ? TimeConverter(dayjs(data).toDate()) : '';
+        case 'time': {
+            const time = ParseTime(data);
+            return time ? TimeConverterFromDate(time) : '';
+        }
 
         case 'address':
         case 'image':

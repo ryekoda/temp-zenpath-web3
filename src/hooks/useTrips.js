@@ -7,6 +7,7 @@ dayjs.extend(timezone);
 dayjs.tz.setDefault('America/Toronto');
 // import { useParams } from "react-router-dom";
 import { GetTrips } from '../helpers/database/Trips';
+import { ParseTime } from '@/lib/format/dates';
 
 
 
@@ -26,22 +27,13 @@ export default function useTrips(companyUID, tripUID, employeeUID, clientUID, fi
         // setTrips(lastDoc ? [...oldTrips, ...tripsData] : tripsData);
 
         // temp
-        if (filterDate) {
+        if (filterDate && tripsData) {
           const theFilterDate = new Date(filterDate)
-          const year = theFilterDate.getFullYear()
-          const month = theFilterDate.getMonth() + 1
-          const day = theFilterDate.getDate()
 
-          tripsData.map(trip => {
-            if (trip['97264'] && trip['97264'].length < 15) {
-              const tempTime = trip['97264']
-              const updatedDate = dayjs(`${year}-${month}-${day} ${tempTime}`).toDate()
-              trip['97264'] = updatedDate
-            } else {
-              const updatedDate = dayjs(trip['97264']).toDate()
-              trip['97264'] = updatedDate
-              return trip;
-            }
+          // Pickup times as Dates on the viewed day (bare times like '14:30' are stored without a date).
+          // Missing or unreadable times become null, never an Invalid Date. Older trips used `pickupTime`.
+          tripsData.forEach(trip => {
+            trip['97264'] = ParseTime(trip['97264'] || trip.pickupTime, theFilterDate)
           });
         }
         // end

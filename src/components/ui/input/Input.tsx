@@ -73,7 +73,8 @@ const Input: React.FC<Props> = ({ name, title, frameType, type, inputValue, plac
     let item: any = { target: { 'name': name } }
     
     if (name === '97264' || name === '16538') {
-      item.target['value'] = newValue.toDate()
+      // A cleared or half-typed picker gives null or an invalid date; save no value rather than an Invalid Date
+      item.target['value'] = newValue?.isValid() ? newValue.toDate() : null
     } else {
       item.target['value'] = newValue
     }

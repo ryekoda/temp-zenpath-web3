@@ -21,6 +21,41 @@ export function ParseDate(value: any): Date | null {
 }
 
 
+// A trip time as a Date, or null when there's no readable time. Accepts what trips have stored
+// over the years: Dates, Firestore timestamps, epoch numbers, ISO strings and bare times of day
+// ('14:30', '2:30 PM'). A bare time is placed on `day` (default: an arbitrary fixed day).
+export function ParseTime(value: any, day?: Date | null): Date | null {
+  if (typeof value === 'string') {
+    const text = value.trim()
+    if (!text) return null
+
+    const timeOfDay = text.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*([ap]\.?m\.?)?$/i)
+    if (timeOfDay) {
+      let hours = Number(timeOfDay[1])
+      const minutes = Number(timeOfDay[2])
+      const seconds = Number(timeOfDay[3] ?? 0)
+      const meridiem = timeOfDay[4]?.[0].toLowerCase()
+
+      if (meridiem) {
+        if (hours < 1 || hours > 12) return null
+        hours = (hours % 12) + (meridiem === 'p' ? 12 : 0)
+      }
+      if (hours > 23 || minutes > 59 || seconds > 59) return null
+
+      const date = day && !isNaN(day.getTime()) ? new Date(day) : new Date(2023, 3, 13)
+      date.setHours(hours, minutes, seconds, 0)
+      return date
+    }
+
+    // Epoch milliseconds saved as text
+    if (/^\d{12,13}$/.test(text)) return ParseDate(Number(text))
+    return ParseDate(text)
+  }
+
+  return ParseDate(value)
+}
+
+
 export function FormatDate(date: any) {
   const d = ParseDate(date)
   if (!d) return ''
