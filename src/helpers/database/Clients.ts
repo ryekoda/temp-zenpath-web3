@@ -40,6 +40,14 @@ export async function UpdateClient(itemUID: string, item: any, baseURL: string) 
 
 
 export async function GetClients(uids: string[], companyUID: string, lastDoc: any, includeRecentlyDeleted: boolean, baseURL: string) {
+    const page = await GetClientsPage(uids, companyUID, lastDoc, includeRecentlyDeleted, baseURL)
+    return page?.clients
+}
+
+
+// One page of the company's clients plus the cursor for the next page (null when there are no more).
+// The API returns the cursor next to the list, not on each client.
+export async function GetClientsPage(uids: string[], companyUID: string, lastDoc: any, includeRecentlyDeleted: boolean, baseURL: string) {
     const url = baseURL + '/api/clients'
 
     
@@ -47,7 +55,7 @@ export async function GetClients(uids: string[], companyUID: string, lastDoc: an
         params: {
             'uids': JSON.stringify(uids),
             'companyUID': companyUID,
-            'lastDoc': JSON.stringify(lastDoc),
+            'lastDoc': lastDoc ? JSON.stringify(lastDoc) : undefined,
             'includeRecentlyDeleted': includeRecentlyDeleted
         }
     })
@@ -55,7 +63,7 @@ export async function GetClients(uids: string[], companyUID: string, lastDoc: an
     const data = doc['data'].clients
 
     if (data) {
-        return data
+        return { clients: data, lastDoc: doc['data'].lastDoc ?? null }
     } else {
         return
     }

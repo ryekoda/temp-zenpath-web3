@@ -7,6 +7,7 @@ import { useCompanySettings } from '@/hooks/useCompanySettings';
 import { UpdateTableSettings } from '@/helpers/database/CompanySettings';
 import useEmployees from '@/hooks/useEmployees';
 import useClients from '@/hooks/useClients';
+import useClientPages from '@/hooks/useClientPages';
 import List from '@/components/list/List';
 import WorkspaceModal from '@/components/modals/WorkspaceModal';
 import WorkspaceNav from '@/app/[id]/_components/WorkspaceNav';
@@ -37,10 +38,8 @@ const Organizer: FC<Props> = ({ companyUID }) => {
     const [isWorkspaceNavOpen, setIsWorkspaceNavOpen] = useState(true)
     const [refreshUID, setRefreshUID] = useState()
     const [isLoading, setIsLoading] = useState(true)
-    // Paging cursor for the client list only (Load more); cleared whenever the page reloads
-    const [clientsCursor, setClientsCursor] = useState<any>()
     const [selectedClientUID, setSelectedClientUID] = useState<any>()
-    const clients: any = useClients(companyUID, [], clientsCursor, refreshUID, true, dbURL, isLoading, setIsLoading)
+    const { clients, loadMore: loadMoreClients } = useClientPages(companyUID, refreshUID, dbURL, isLoading, setIsLoading)
     const company: any = useCompany(companyUID, stripeInfo, true, refreshUID, dbURL)
     const companySettings: any = useCompanySettings(companyUID, 'clients', refreshUID, true, dbURL)
     const companyTripSettings: any = useCompanySettings(companyUID, 'trips', refreshUID, true, dbURL)
@@ -208,18 +207,12 @@ const Organizer: FC<Props> = ({ companyUID }) => {
         }
     }
 
-    // Fetches the next page of clients and adds it to the list (useClients appends when given a cursor).
+    // Fetches the next page of clients and adds it to the list
     function loadMoreData() {
-        const cursor = clients[clients.length - 1]?.lastDoc
-        if (cursor) {
-            setClientsCursor(cursor)
-        } else {
-            console.warn('Load more: the clients API did not return a lastDoc cursor, so the next page can’t be requested.')
-        }
+        loadMoreClients()
     }
 
     function reloadData() { 
-        setClientsCursor(undefined)
         setModalName('create')
         setSelectedClientUID(null)
         setFields(FormData('create', null, companySettings).client)
