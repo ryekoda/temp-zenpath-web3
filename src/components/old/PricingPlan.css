@@ -1,0 +1,296 @@
+/* Large screens */
+@media (min-width: 1281px) {
+    /* .s2FGw {
+      width: 30%;
+    } */
+  /* 
+    .kAVdy {
+      margin: 0 auto;
+      margin-top: 14%;
+    } */
+  }
+  
+  
+  /* Laptops and Desktops */
+  @media (min-width: 1025px) and (max-width: 1280px){
+    /* .s2FGw {
+      width: 30%;
+    } */
+  
+    /* .kAVdy {
+      margin: 0 auto;
+      margin-top: 14%;
+    } */
+  }
+  
+  
+  /* Tablets Ipads portrait mode */
+  @media (min-width: 768px) and (max-width: 1024px){
+    /* .s2FGw {
+      width: 30%;
+    } */
+  
+    /* .kAVdy {
+      margin: 0 auto;
+      margin-top: 14%;
+    } */
+  }
+  
+  
+  /* Low resolution  Tablets, Ipads */
+  @media (min-width: 481px) and (max-width: 767px) {
+    /* .s2FGw {
+      width: 30%;
+    } */
+  
+    /* .kAVdy {
+      margin: 0 auto;
+      margin-top: 14%;
+    } */
+  }
+  
+  
+  /* Mobile Devices */
+  @media (max-width: 480px) {
+    /* .s2FGw {
+      width: 100%;
+      margin-top: 40px;
+    } */
+  
+    /* .kAVdy {
+      margin: 0 auto;
+      margin-top: 14%;
+    } */
+  }
+  
+  
+  
+  
+  
+  .s2FGw {
+    padding: 20px 20px 20px 20px;
+  }
+  
+  .kAVdy {
+    border-radius: 5px;
+    height: 800px;
+    overflow: hidden;
+  }
+  
+  #XVzxb {
+    border: 1px solid #18B5BF;
+  }
+  
+  #shZNm {
+    border: 1px solid #C6C6C6;
+  }
+  
+  .zrsRq {
+    width: 100%;
+    height: 12px;
+  }
+  
+  #eZ5au {
+    background-color: #18B5BF;
+  }
+  
+  #AcIBu {
+    background-color: transparent;
+  }
+  
+  .Dnil1 {
+    width: 260px;
+    padding: 0px 20px 0px 20px;
+  }
+  
+  .nKvy1 {
+    display: flex;
+  }
+  
+  .vwKwq {
+    margin: 0px;
+    font-size: 70px;
+    font-weight: 300;
+  }
+  
+  #DD79s {
+    color: #18B5BF;
+  }
+  
+  #CoxID {
+    color: black;
+  }
+  
+  .pu5DQ {
+    margin: 0px;
+    font-weight: 300;
+  }
+  
+  #M5qJY {
+    margin-top: 24px;
+  }
+  
+  .tRjsP {
+    margin-left: 14px;
+  }
+  
+  .fqiF6 {
+    height: 60px;
+  }
+  
+  .bL6XT {
+    margin: 0px;
+  }
+  
+  #UpSk3 {
+    font-weight: bold;
+  }
+  
+  #A2FpD {
+    font-weight: 300;
+  }
+  
+  .mGkQt {
+    width: 100%;
+    height: 40px;
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px 1px rgba(24, 181, 191, 0.25);
+  }
+  
+  .mGkQt:hover {
+    cursor: pointer;
+  }
+  
+  #Q1Qpq {
+    color: white;
+    background-color: #18B5BF;
+    border: none;
+  }
+  
+  #Q1Qpq:hover {
+    background-color: #00cfde;
+  }
+  
+  #GFdI4 {
+    color: #18B5BF;
+    background-color: white;
+    border: 2px solid #18B5BF;
+  }
+  
+  #GFdI4:hover {
+    color: #00cfde;
+    border: 2px solid #00cfde;
+  }
+  
+  .ApKaU {
+    margin-top: 40px;
+    font-weight: 300;
+    font-size: 15px;
+    height: 42px;
+  }
+  
+  .IMPqs {
+    font-size: 18px;
+    margin: 0px;
+    margin-top: 40px;
+    font-weight: bold;
+    width: 70%;
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  .UjTjH {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+    margin-top: 20px;
+  }
+  
+  .wOshq {
+    display: flex;
+  }
+  
+  .x5t8l {
+    width: 30px;
+    height: 30px;
+    margin-top: 24px;
+  }
+  
+  .hkr6J {
+    margin: 0px;
+    margin-top: 10px;
+  }
+  
+  .rAe1E {
+    font-size: 36px;
+    margin: 0px;
+    text-align: center;
+  }
+  
+  /* .bL6XT {
+    font-size: 18px;
+    margin: 0px;
+    margin-top: 4px;
+    text-align: center;
+  } */
+  
+  .AakBN {
+    margin-top: 30px;
+  }
+  
+  .ItCP7 {
+    height: 110px;
+    width: 100%;
+    margin: 0;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+  
+  .APrif {
+    display: block;
+    width: 50%;
+    margin: 0 auto;
+    border-radius: 25px;
+    padding: 10px 10px 10px 10px;
+    background-color: transparent;
+    border: 1px solid black;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+  }
+  
+  .APrif:hover {
+    background-color: #43788F;
+    color: white;
+    cursor: pointer;
+    border: 1px solid black;
+    text-align: center;
+  }
+  
+  #LeN8V {
+    border: 1px solid #717FF6;
+  }
+  
+  .yIw6i {
+    width: 20px;
+    height: 20px; 
+    border-radius: 50px;
+    margin: 0 auto;
+  }
+  
+  .yIw6i:hover {
+    cursor: pointer;
+  }
+  
+  

@@ -1,0 +1,21 @@
+.zIm0e {
+    height: 45px;
+    width: 180px;
+    margin-top: 20px;
+    float: right;
+    background-color: #26C797;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+.zIm0e:hover {
+    cursor: pointer;
+    background-color: #38e4b0;
+}
+
+.zIm0e.disabled {
+    background-color: rgb(206, 206, 206);
+    cursor: default;
+}

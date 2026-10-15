@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/styles/*": ["./src/styles/*"],
+      "@/config/*": ["./src/config/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/context/*": ["./src/context/*"],
+      "@/helpers/*": ["./src/helpers/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/context/AuthContext.js", "src/config/firebase/Firebase.js", "src/components/containers/dashboard/subViews/Cell.tsx", "src/helpers/database/Trips.ts", "src/components/containers/dashboard/subViews/CreateBoard.tsx", "src/components/PageHeader.tsx", "src/lib/Utils.ts", "src/components/ui/input/Input.tsx", "src/components/ui/Tooltip.js", "src/components/containers/reports/subViews/Cell.js"],
+  "exclude": ["node_modules"]
+}

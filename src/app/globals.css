@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+
+  /* Zenpath design system tokens (see refrences/zenpath-website-design-system.md) */
+  --color-brand-500: #20C997;
+  --color-brand-600: #0FA978;
+  --color-brand-700: #087F5B;
+  --color-brand-100: #D9F7ED;
+  --color-brand-50: #F0FBF7;
+
+  --color-ink-900: #101A33;
+  --color-ink-700: #263B5A;
+  --color-ink-500: #607895;
+  --color-ink-400: #8DA0B6;
+
+  --color-border: #DCE6EE;
+  --color-surface: #FFFFFF;
+  --color-surface-soft: #F7FAFC;
+  --color-page: #FFFFFF;
+
+  --color-success: #0F9F6E;
+  --color-success-soft: #DDF7EB;
+  --color-info: #2798D8;
+  --color-info-soft: #E1F3FD;
+  --color-warning: #D99A16;
+  --color-warning-soft: #FFF3D6;
+  --color-danger: #D94667;
+  --color-danger-soft: #FCE7ED;
+
+  --radius-button: 10px;
+  --radius-card: 14px;
+  --radius-panel: 20px;
+
+  --container-width: 1320px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+/* body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+} */

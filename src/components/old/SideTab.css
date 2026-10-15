@@ -1,0 +1,78 @@
+  .b3kcF {
+    width: 30px;
+    height: 30px;
+    /* margin: 8px; */
+    -ms-transform: translateY(20%);
+    transform: translateY(20%);
+  }
+  
+  .skxyS {
+    color: black;
+    font-weight: 500;
+    margin-left: 12px;
+    -ms-transform: translateY(20%);
+    transform: translateY(20%);
+  }
+  
+  .EQxHF {
+    border-radius: 5px;
+    margin-top: 20px;
+    display: flex;
+    height: 60px;
+  }
+  
+  .EQxHF.active {
+    background-color: #F2F2F2;
+    box-shadow: 0 0px 2px rgba(0,0,0,0.1), 0 3px 3px rgba(0,0,0,0.1);
+  }
+  
+  .EQxHF:hover {
+    cursor: pointer;
+    background-color: #F2F2F2;
+  }
+  
+  .wZmJI {
+    height: 100%;
+    display: inline-block;
+  }
+  
+  .tooltip {
+    visibility: hidden;
+    width: 120px;
+    background-color: gray;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    margin-left: 50px;
+    margin-top: -20px;
+  }
+  
+  .EQxHF:hover .tooltip {
+    visibility: visible;
+  }
+  
+  .iHToK {
+    width: 80%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background-color: #717FF6;
+    border-radius: 50px 50px 0px 0px;
+    height: 40px;
+    margin-left: 10%;
+  }
+  
+  .iHToK:hover {
+    cursor: pointer;
+    height: 45px;
+    background-color: #8591f6;
+  }
+  
+  .MG32i {
+    width: 22px;
+    height: 22px;
+    filter: brightness(0) invert(1);
+  }
