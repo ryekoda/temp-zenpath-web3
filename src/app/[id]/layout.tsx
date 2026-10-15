@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import { useAuth } from '@/context/AuthContext';
-import LoadingScreen from '@/components/ui/LoadingScreen';
+import LoadingScreen from '@/components/ui/loading/LoadingScreen';
 
 
 

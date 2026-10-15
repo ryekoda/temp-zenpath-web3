@@ -1,11 +1,8 @@
 import React from 'react';
-import Image from 'next/image';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import { Button } from '@/components/ui/Button';
-import { cn } from '@/lib/Utils';
+import { Minus, Plus } from 'lucide-react';
+import { CapitalizeFirstLetterOfEachWord } from '@/lib/format/text';
 
 
 
@@ -19,74 +16,65 @@ function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+    <div role="tabpanel" hidden={value !== index} id={`trip-leg-panel-${index}`} aria-labelledby={`trip-leg-tab-${index}`} className='pt-5' {...other}>
+      {value === index && children}
     </div>
   );
 }
 
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
+const tabsSx = {
+  minHeight: 40,
+  '& .MuiTabs-indicator': { backgroundColor: 'var(--color-brand-600)', height: 2 },
+  '& .MuiTab-root': { minHeight: 40, minWidth: 0, px: 1.5, textTransform: 'none', fontFamily: 'inherit', fontSize: 14, fontWeight: 500, color: 'var(--color-ink-500)' },
+  '& .MuiTab-root.Mui-selected': { color: 'var(--color-ink-900)', fontWeight: 600 },
 }
 
-export default function BasicTabs(props: any) {
-    const { children, tabtitles, tabIndex, setTabIndex, onPress, modalName } = props
+const legButton = 'inline-flex h-8 items-center gap-1.5 rounded-[var(--radius-button)] px-2.5 text-sm font-medium text-ink-700 transition-colors duration-200 hover:bg-surface-soft hover:text-ink-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600'
 
+// Tabs for the legs of a trip (Leg A, Leg B, …) in the trip form.
+export default function BasicTabs(props: any) {
+  const { children, tabtitles, tabIndex, setTabIndex, onPress, modalName } = props
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex({ current: newValue, previous: tabIndex.current })
-    // setCurrentIndex(newValue)
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <div className='flex felx-row justify-between'>
-          <div className='flex felx-row'>
-            <Tabs value={tabIndex.current} onChange={handleChange} aria-label="basic tabs example">
-                {
-                    tabtitles.map((title: any, index: number) => (
-                        <Tab key={ index } label={ title } {...a11yProps(index)} />
-                    ))
-                }
-            </Tabs>
-            {
-              (tabtitles.length > 1) &&
-                <Button variant='ghost' onClick={ () => onPress('remove') } className={cn('w-fit', 'className', 'mt-1')}>
-                    <Image src="/images/Minus.png" alt="minus icon" width={20} height={20}/>
-                </Button>
-            }
+    <div className='w-full'>
+      <div className='flex items-center justify-between gap-2 border-b border-line'>
+        <Tabs value={tabIndex.current} onChange={handleChange} aria-label="Trip legs" sx={tabsSx}>
+          {
+            tabtitles.map((title: any, index: number) => (
+              <Tab key={ index } label={ CapitalizeFirstLetterOfEachWord(title) } id={`trip-leg-tab-${index}`} aria-controls={`trip-leg-panel-${index}`}/>
+            ))
+          }
+        </Tabs>
 
-          </div>
-
+        <div className='flex items-center gap-1 pb-1'>
+          {
+            (tabtitles.length > 1) &&
+              <button type='button' onClick={ () => onPress('remove') } className={ legButton }>
+                <Minus aria-hidden="true" className='h-4 w-4'/>
+                Remove leg
+              </button>
+          }
           {
             (tabtitles.length < 4 && modalName !== 'edit') &&
-              <Button variant='ghost' onClick={ () => onPress('add') } className={cn('w-fit', 'className', 'mt-1')}>
-                  <Image src="/images/Add.svg" alt="add icon" width={20} height={20}/>
-              </Button>
+              <button type='button' onClick={ () => onPress('add') } className={ legButton }>
+                <Plus aria-hidden="true" className='h-4 w-4'/>
+                Add leg
+              </button>
           }
         </div>
-      </Box>
-            {
-                tabtitles.map((title: any, index: number) => (
-                    <CustomTabPanel key={ index } value={tabIndex.current} index={index}>
-                        { children }
-                    </CustomTabPanel>
-                ))
-            }
-    </Box>
+      </div>
+
+      {
+        tabtitles.map((title: any, index: number) => (
+          <CustomTabPanel key={ index } value={tabIndex.current} index={index}>
+            { children }
+          </CustomTabPanel>
+        ))
+      }
+    </div>
   );
 }

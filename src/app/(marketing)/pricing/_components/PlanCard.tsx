@@ -2,7 +2,7 @@ import { FC } from "react";
 import Link from 'next/link';
 import { Check } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/Button';
-import { cn } from '@/lib/Utils';
+import { cn } from '@/lib/cn';
 
 
 

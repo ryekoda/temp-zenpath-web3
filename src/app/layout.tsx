@@ -2,10 +2,9 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
 import { cookies } from 'next/headers'
-import { cn } from '@/lib/Utils'
+import { cn } from '@/lib/cn';
 import Providers from '@/components/Providers'
 import Nav from '@/components/layout/nav/Nav'
-import Footer from '@/components/Footer';
 
 
 
@@ -69,7 +68,6 @@ export default function RootLayout({
           {/* <div className='container max-w-7xl mx-auto h-full pt-12'> */}
             <main>{children}</main>
           {/* </div> */}
-          {/* <Footer/> */}
         </Providers>
 
           {/* Allow for more height on mobile devices */}

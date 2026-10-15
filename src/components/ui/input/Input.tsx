@@ -2,13 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import dayjs from 'dayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import Paragraph from '@/components/ui/Paragraph';
-import { CapitalizeFirstLetter, GetDropDownOptions } from '@/lib/GlobalFunctions';
+import { cn } from '@/lib/cn';
+import { CapitalizeFirstLetter } from '@/lib/format/text';
+import { GetDropDownOptions } from '@/lib/tables/columns';
+import { fieldClassName, labelClassName, pickerSx, textareaClassName } from './fieldStyles';
 
 import DropDrown from './subViews/DropDrown';
 import Address from './subViews/Address';
@@ -100,22 +101,31 @@ const Input: React.FC<Props> = ({ name, title, frameType, type, inputValue, plac
   }
 
 
+  const fieldId = `field-${name}`
+
   return (
-    <div>
-      <Paragraph size='xs' className="font-medium text-left mt-4" style={{ display: title ? 'block' : 'none' }}>
-        <span>
-          { CapitalizeFirstLetter(title) }
-          <span className='ml-[2px] text-red-600'>{ (required && !hideRequiredAsterisk) && '*' }</span>
-        </span>
-      </Paragraph> 
+    <div className={ cn(frameType !== 'submit' && 'mt-4 first:mt-0') }>
+      {
+        title &&
+          <label htmlFor={ fieldId } className={ labelClassName }>
+            { CapitalizeFirstLetter(title) }
+            {
+              (required && !hideRequiredAsterisk) &&
+                <>
+                  <span aria-hidden="true" className='ml-0.5 text-status-danger'>*</span>
+                  <span className='sr-only'> (required)</span>
+                </>
+            }
+          </label>
+      }
 
       {
         (frameType === 'text' || frameType === 'number' || frameType === 'phone') ?
-          <input className='dark:bg-white w-full p-3 border-solid border border-slate-400 rounded-md' name={ name } placeholder={ placeholder } type={ type } value={ value } onChange={ (e) => onChange(e) } required={ required }/>
+          <input id={ fieldId } className={ fieldClassName } name={ name } placeholder={ placeholder } type={ type } value={ value } onChange={ (e) => onChange(e) } required={ required }/>
         : frameType === 'longText' ?
-          <textarea className='dark:bg-white w-full p-2 border-solid border border-slate-400 rounded-md' style={{ resize: 'none' }} name={ name } rows={8} value={ value } onChange={ (e) => onChange(e) } required={ required }/>
+          <textarea id={ fieldId } className={ textareaClassName } name={ name } rows={5} value={ value } onChange={ (e) => onChange(e) } required={ required }/>
         : frameType === 'dropDown' ?
-          <DropDrown name={ name } type={ name === '71130' ? 0 : 1 } value={ value } autoCompleteData={ autoCompleteData } options={ (options && options.length > 0) ? options : GetDropDownOptions(name, options, field, allDrivers) } onChange={ onChange } errorCode={ errorCode } errorMessage='Enter client first & last name' isRequired={ required }/>
+          <DropDrown id={ fieldId } name={ name } type={ name === '71130' ? 0 : 1 } value={ value } autoCompleteData={ autoCompleteData } options={ (options && options.length > 0) ? options : GetDropDownOptions(name, options, field, allDrivers) } onChange={ onChange } errorCode={ errorCode } errorMessage='Enter client first & last name' isRequired={ required }/>
         : frameType === 'address' ?
           <>
             {
@@ -125,7 +135,7 @@ const Input: React.FC<Props> = ({ name, title, frameType, type, inputValue, plac
 
                   {
                     (isNewAddress) &&
-                      <Address name={ name } value={ typeof value === 'object' ? value.address : value } onChange={ onChange }/>
+                      <Address id={ fieldId } name={ name } value={ typeof value === 'object' ? value.address : value } onChange={ onChange }/>
                   }
                 </>
               :
@@ -145,31 +155,31 @@ const Input: React.FC<Props> = ({ name, title, frameType, type, inputValue, plac
 
                         {
                           isNewAddress &&
-                            <Address name={ name } value={ typeof value === 'object' ? value.address : value }/>
+                            <Address id={ fieldId } name={ name } value={ typeof value === 'object' ? value.address : value }/>
                         }
                       </>
                     :
-                      <Address name={ name } value={ typeof value === 'object' ? value.address : value } onChange={ onChange }/>
+                      <Address id={ fieldId } name={ name } value={ typeof value === 'object' ? value.address : value } onChange={ onChange }/>
                   }
                 </>
             }
           </>
         : frameType === 'time' ?
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['TimePicker']}>
-              <TimePicker value={ value ? dayjs(value) : dayjs(new Date()) } onChange={ (e) => InputChanged(e) }/>
-            </DemoContainer>
+            <TimePicker value={ value ? dayjs(value) : dayjs(new Date()) } onChange={ (e) => InputChanged(e) } sx={ pickerSx } slotProps={{ textField: { id: fieldId } }}/>
           </LocalizationProvider>
         : frameType === 'date' ?
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker value={ value ? dayjs(value) : dayjs(new Date()) } onChange={ (e) => InputChanged(e) }/>
+            <DatePicker value={ value ? dayjs(value) : dayjs(new Date()) } onChange={ (e) => InputChanged(e) } sx={ pickerSx } slotProps={{ textField: { id: fieldId } }}/>
           </LocalizationProvider>
         : frameType === 'checkbox' ?
           <Checkbox_Container isChecked={ isChecked } onChange={ checkboxChanged }/>
         : frameType === 'signature' ?
-          <Image src={ value } alt='signatureImage' width={60} height={60} />
+          <div className='w-fit rounded-[var(--radius-button)] border border-line bg-white p-2'>
+            <Image src={ value } alt='Signature' width={120} height={60} className='h-[60px] w-auto object-contain'/>
+          </div>
         : frameType === 'submit' &&
-          <input className='w-full mt-[10px] bg-[#26C797] hover:bg-[#41b794] text-white font-semibold p-3 rounded-md hover:cursor-pointer' type={ type } value={ value } disabled={ isDisabled }/>
+          <input className='h-12 w-full cursor-pointer rounded-[var(--radius-button)] bg-brand-600 text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60' type={ type } value={ value } disabled={ isDisabled }/>
       }
     </div>
   )

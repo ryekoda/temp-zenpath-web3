@@ -1,7 +1,7 @@
 import { FC } from "react";
 import Link from 'next/link';
 import { ArrowRight, Users } from 'lucide-react';
-import { CapitalizeFirstLetterOfEachWord } from '@/lib/Utils';
+import { CapitalizeFirstLetterOfEachWord } from '@/lib/format/text';
 import WorkspaceCover from '@/components/workspace/WorkspaceCover';
 
 

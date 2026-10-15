@@ -19,7 +19,7 @@ export default function useClients(companyUID, uids, lastDoc, refreshUID, isGran
         if (typeof isLoading === 'boolean') setIsLoading(false)
       })();  
     }
-  }, [ JSON.stringify(uids), refreshUID ]);
+  }, [ JSON.stringify(uids), refreshUID, JSON.stringify(lastDoc) ]);
 
 
   return clients

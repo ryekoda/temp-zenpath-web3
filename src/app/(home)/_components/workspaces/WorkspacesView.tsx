@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useCompanies } from '@/hooks/useCompany';
 import { Button } from '@/components/ui/Button';
 import Dialog from '@/components/ui/Dialog';
-import { CapitalizeFirstLetter } from '@/lib/Utils';
+import { CapitalizeFirstLetter } from '@/lib/format/text';
 import WorkspaceCard from './WorkspaceCard';
 import CreateWorkspaceForm from './CreateWorkspaceForm';
 

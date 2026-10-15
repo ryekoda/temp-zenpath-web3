@@ -57,3 +57,41 @@
     )
     rgb(var(--background-start-rgb));
 } */
+
+/* Map: driver live-location badge and popups (created by Mapbox outside React, see ui/map/Map_A.ts) */
+.zenpath-driver-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  border: 3px solid #FFFFFF;
+  background-color: var(--color-brand-700);
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 16px -6px rgba(16, 26, 51, 0.45);
+  cursor: pointer;
+}
+
+.mapboxgl-popup-content {
+  border-radius: var(--radius-button);
+  border: 1px solid var(--color-border);
+  padding: 10px 12px;
+  font-family: inherit;
+  box-shadow: 0 12px 32px -12px rgba(16, 26, 51, 0.3);
+}
+
+.zenpath-popup-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink-900);
+}
+
+.zenpath-popup-subtitle {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--color-ink-500);
+}

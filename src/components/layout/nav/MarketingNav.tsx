@@ -7,7 +7,7 @@ import { Menu } from 'lucide-react';
 import Drawer from '@/components/ui/Drawer';
 import Container from '@/components/ui/Container';
 import { buttonVariants } from '@/components/ui/Button';
-import { cn } from '@/lib/Utils';
+import { cn } from '@/lib/cn';
 
 
 

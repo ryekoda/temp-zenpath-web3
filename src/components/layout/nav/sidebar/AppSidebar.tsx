@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import { Bell, HelpCircle, LayoutGrid } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useNotifications } from '@/hooks/useNotifications';
-import { cn } from '@/lib/Utils';
+import { cn } from '@/lib/cn';
 import SidebarPanel from './SidebarPanel';
 import NotificationsPanel from './NotificationsPanel';
 import HelpPanel from './HelpPanel';

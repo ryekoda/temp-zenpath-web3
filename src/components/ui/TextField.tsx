@@ -1,5 +1,5 @@
 import { forwardRef, InputHTMLAttributes, ReactNode } from "react";
-import { cn } from '@/lib/Utils';
+import { cn } from '@/lib/cn';
 
 
 

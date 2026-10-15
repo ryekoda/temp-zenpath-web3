@@ -1,10 +1,12 @@
 import dayjs from 'dayjs';
-import { FormatDate, FormatPhoneNumber, TimeConverter, CapitalizeFirstLetterOfEachWord, UTCTimeToLocalTime } from '@/lib/Utils';
+import { FormatDate, TimeConverter, UTCTimeToLocalTime } from '@/lib/format/dates';
+import { FormatPhoneNumber } from '@/lib/format/phone';
+import { CapitalizeFirstLetterOfEachWord } from '@/lib/format/text';
 
 export function FormatData(type: string, data: any): any {
     switch (type) {
         case 'date':
-            return data ? FormatDate(new Date(data)) : '';
+            return FormatDate(data);
 
         case 'phone':
             return data ? FormatPhoneNumber(data) : '';

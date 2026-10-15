@@ -1,6 +1,7 @@
 import { FIELD_IDS } from '../fields';
 import { FormatData } from '../formatData';
-import { GetUserInfo, UTCTimeToLocalTime } from '@/lib/Utils';
+import { GetUserInfo } from '@/lib/workspace/members';
+import { UTCTimeToLocalTime } from '@/lib/format/dates';
 
 function formatName(info: any): string {
     return info ? `${info.lName}, ${info.fName}` : '';

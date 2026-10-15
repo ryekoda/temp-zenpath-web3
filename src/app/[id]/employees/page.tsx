@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Organizer from '@/components/containers/employees/Organizer';
+import Organizer from './Organizer';
 import Restriction from '@/components/ui/Restriction';
 
 

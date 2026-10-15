@@ -3,8 +3,8 @@ import { FC, useState } from "react";
 import { LogOut, Smartphone } from 'lucide-react';
 import { Button, buttonVariants } from '@/components/ui/Button';
 import { Logout } from '@/helpers/firebase/FirebaseAuth';
-import { CapitalizeFirstLetterOfEachWord } from '@/lib/GlobalFunctions';
-import { cn } from '@/lib/Utils';
+import { CapitalizeFirstLetterOfEachWord } from '@/lib/format/text';
+import { cn } from '@/lib/cn';
 
 
 

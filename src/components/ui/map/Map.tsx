@@ -60,9 +60,17 @@ const MapView: FC<Props> = ({ boardUID, drivers, height, mapSettings, initialVie
         })();  
     }, [])
 
+    // Mapbox only watches the window; keep the canvas sized when the side menus open or close.
+    useEffect(() => {
+        if (!mapContainer.current) return
+        const observer = new ResizeObserver(() => map.current?.resize())
+        observer.observe(mapContainer.current)
+        return () => observer.disconnect()
+    }, [])
+
 
     return (
-        <div ref={ mapContainer } className="map-container" style={{ height: height, width: '100vw', zIndex: 0 }} />
+        <div ref={ mapContainer } className="map-container" style={{ height: height, width: '100%', zIndex: 0 }} />
     )
 };
 

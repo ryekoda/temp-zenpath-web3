@@ -1,4 +1,4 @@
-import { GetMembers2 } from '@/lib/Utils';
+import { GetMembers2 } from '@/lib/workspace/members';
 // import { Invite } from '@/helpers/sendInBlue/SendInBlue';
 import { app, auth, db, analytics } from '@/config/firebase/Firebase';
 

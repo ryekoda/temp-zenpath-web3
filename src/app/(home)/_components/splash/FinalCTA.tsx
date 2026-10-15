@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import Container from '@/components/ui/Container';
 import AccentLine from '@/components/ui/AccentLine';
 import { buttonVariants } from '@/components/ui/Button';
-import { cn } from '@/lib/Utils';
+import { cn } from '@/lib/cn';
 
 
 

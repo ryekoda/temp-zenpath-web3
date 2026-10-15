@@ -1,12 +1,13 @@
 import { FC } from "react";
-import Paragraph from '@/components/ui/Paragraph';
-import { CapitalizeFirstLetterOfEachWord } from '@/lib/GlobalFunctions';
+import { CapitalizeFirstLetterOfEachWord } from '@/lib/format/text';
+import { fieldClassName, selectClassName } from '../fieldStyles';
 
 import { GenerateAutoCompleteValue } from '../Actions';
 
 
 
 interface Props {
+    id?: string
     name: string
     type: number
     value: any
@@ -18,20 +19,18 @@ interface Props {
     isRequired: boolean
 }
 
-const DropDown: FC<Props> = ({ name, type, value, autoCompleteData, options, onChange, errorCode, errorMessage, isRequired }) => {
+const DropDown: FC<Props> = ({ id, name, type, value, autoCompleteData, options, onChange, errorCode, errorMessage, isRequired }) => {
     return (
         <div>
             {
                 (type === 0) ?
                     <div className='relative'>
-                        <input className='dark:bg-white w-full p-3 border-solid border border-slate-400 rounded-md' name={ name } value={ GenerateAutoCompleteValue(value, autoCompleteData).title } onChange={ (e) => onChange(e) } autoComplete="off" spellCheck={ false } required={ isRequired } />
-                        <Paragraph size='xs' className="text-red-600" style={{ display: errorCode === 1 ? 'block' : 'none' }}>
-                            { errorMessage }
-                        </Paragraph> 
+                        <input id={ id } className={ fieldClassName } name={ name } value={ GenerateAutoCompleteValue(value, autoCompleteData).title } onChange={ (e) => onChange(e) } autoComplete="off" spellCheck={ false } required={ isRequired } placeholder='Start typing a client’s name' aria-invalid={ errorCode === 1 }/>
+                        { errorCode === 1 && <p role='alert' className='mt-1.5 text-sm text-status-danger'>{ errorMessage }</p> }
                     </div>
                 :
-                    <select className='dark:bg-white w-full p-3 border-solid border border-slate-400 rounded-md hover:cursor-pointer' name={ name } value={ value } onChange={ (e) => onChange(e) } >
-                        <option value=''></option>
+                    <select id={ id } className={ selectClassName } name={ name } value={ value } onChange={ (e) => onChange(e) } >
+                        <option value=''>Select…</option>
 
                         {
                             options.map((item: any) => (

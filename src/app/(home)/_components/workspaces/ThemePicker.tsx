@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Check } from 'lucide-react';
-import { cn } from '@/lib/Utils';
+import { cn } from '@/lib/cn';
 import { WorkspaceTheme } from './_utils/Actions';
 
 

@@ -1,6 +1,6 @@
 import { FC, ReactNode, useId } from "react";
 import { X } from 'lucide-react';
-import { cn } from '@/lib/Utils';
+import { cn } from '@/lib/cn';
 
 
 

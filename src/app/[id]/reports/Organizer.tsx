@@ -1,141 +1,184 @@
-// app/[id]/reports/Organizer.tsx
-"use client";
-
-import { FC } from 'react';
+"use client"
+import { FC, useState } from 'react';
+import dayjs from 'dayjs';
+import { FileText, Lock, Printer } from 'lucide-react';
+import { UpdateTableSettings } from '@/helpers/database/CompanySettings';
+import WorkspaceNav from '@/app/[id]/_components/WorkspaceNav';
+import WorkspacePageHeader, { ColumnsButton } from '@/app/[id]/_components/WorkspacePageHeader';
+import { DateNavigator, DriverFilter, ToolbarDivider } from '@/app/[id]/_components/WorkspaceFilters';
+import { AccessDenied, EmptyState } from '@/app/[id]/_components/WorkspaceStates';
+import ListSkeleton from '@/components/ui/loading/ListSkeleton';
+import Tooltip from '@/components/tooltips/Tooltip';
+import WorkspaceModal from '@/components/modals/WorkspaceModal';
+import { Button } from '@/components/ui/Button';
+import { IsAccessGranted } from '@/lib/workspace/access';
+import { SubscriptionStatus } from '@/lib/billing/plans';
 import { useReportOrganizerData } from './_hooks/useReportOrganizerData';
-import { ReportHeader } from './_components/ReportHeader';
-import { StandardTable } from '@/components/ui/table/StandardTable';
-import { TableRow } from '@/components/ui/table/TableRow';
-import { ModalShell } from '@/components/ui/modal/ModalShell'; // 👈 Swapped in the clean structural shell
-import { ColorRing } from 'react-loader-spinner';
-import { IsAccessGranted } from '@/lib/Utils';
-import SortListData from '@/lib/ListSort.js';
+import ReportRow from './_components/ReportRow';
+import ReportPrintHeader from './_components/ReportPrintHeader';
+import { NAME_COLUMN, ReportColumnStyle } from './_utils/reportColumns';
+import { SortByPickupTime } from './_utils/sortByPickupTime';
 
-// Directly import sub-view operational content containers
-// import Feedback_Container from './_components/subViews/Feedback';
-// import Invite_Container from './_components/subViews/Invite';
-// import Billing_Container from './_components/subViews/Billing';
 
-interface OrganizerProps {
-  companyUID: string;
+
+// This workspace has reports without a Standard plan.
+const REPORTS_ALWAYS_ON_COMPANY_UID = 'Mf21IpttifgYXMDz2Sbp'
+
+interface Props {
+    companyUID: string
 }
 
-export const Organizer: FC<OrganizerProps> = ({ companyUID }) => {
-  // Inject the brain state controller
-  const { state, actions } = useReportOrganizerData(companyUID);
+const Organizer: FC<Props> = ({ companyUID }) => {
+    const { state, actions } = useReportOrganizerData(companyUID)
+    const { company, currentUser, companySettings, drivers, clients, filterDate, selectedDriverUID, activeHeaders } = state
+    const trips = state.trips || []
+    const dbURL = state.dbURL || ''
 
-  // 1. Loading State Guard Component
-  if (state.isLoading) {
-    return (
-      <div className="flex w-full h-full justify-center pt-52 bg-white">
-        <ColorRing 
-          visible={true} 
-          height="80" 
-          width="80" 
-          ariaLabel="blocks-loading" 
-          colors={['#26C797', '#717FF6', '#D93F67', '#F0E44F', '#FCBC05']} 
-        />
-      </div>
-    );
-  }
+    const [isWorkspaceNavOpen, setIsWorkspaceNavOpen] = useState(true)
+    const [isToolTipOpen, setIsToolTipOpen] = useState(false)
+    const [currentTooltip, setCurrentTooltip] = useState('')
+    const [toolTipPosition, setToolTipPosition] = useState('bottom')
+    const [toolTipTrigger, setToolTipTrigger] = useState<any>()
+    const [toolTipName, setToolTipName] = useState('boardSettings')
+    const [modalName, setModalName] = useState('create')
+    const [isShowingModal, setIsShowingModal] = useState(false)
 
-  // 2. Organization Permissions Security Guard
-  const isApproved = IsAccessGranted(state.company, state.currentUser) === 'approved';
-  if (!isApproved) {
-    return <div className="w-full text-center mt-40 font-semibold text-red-500">Access Status: Rejected</div>;
-  }
+    const isLocked = company && company.id !== REPORTS_ALWAYS_ON_COMPANY_UID && !SubscriptionStatus(company, 'standard').isFeatureAvailable
+    const columns = activeHeaders.filter((header: any) => !header.isHidden)
 
-  // 3. Pre-compute data sorting outside of the rendering frame
-  const sortedTrips = SortListData(state.trips || [], state.sortSectionUID, state.sortDirection);
-
-  // 4. Dynamic modal titling resolver based on state name
-  const getModalTitle = () => {
-    switch (state.selectedModalName) {
-      case 'feedback': return 'Give Feedback';
-      case 'invite': return 'Invite Team Members';
-      case 'billing': return 'Billing & Workspace Subscription';
-      default: return '';
+    function reloadData() {
+        actions.setRefreshUID(Date.now())
     }
-  };
 
-  return (
-    <div className="w-[calc(100%-80px)] ml-20 h-full bg-slate-50 flex flex-row relative print:w-full">
-      
-      {/* ========================================== */}
-      {/*  REUSABLE INLINE MODAL LAYER               */}
-      {/* ========================================== */}
-      <ModalShell
-        isOpen={Boolean(state.selectedModalName)}
-        title={getModalTitle()}
-        onClose={() => actions.handleModalClose?.(false)}
-        maxWidth={state.selectedModalName === 'billing' ? 'xl' : state.selectedModalName === 'feedback' ? 'lg' : 'sm'}
-        className="bg-slate-50/40"
-        isBackOptionsShowing={state.isModalOptionsShowing}
-        onBackClick={() => actions.handleModalOption?.('history', false)}
-      >
-        {/* {state.selectedModalName === 'feedback' && <Feedback_Container />} */}
-        
-        {state.selectedModalName === 'invite' && (
-            <></>
-        //   <Invite_Container 
-        //     userInfo={state.currentUser} 
-        //     company={state.company} 
-        //     setRefreshUID={actions.setRefreshUID} 
-        //     dbURL={state.dbURL!} 
-        //   />
-        )}
-        
-        {state.selectedModalName === 'billing' && (
-            <></>
-        //   <Billing_Container 
-        //     userInfo={state.currentUser} 
-        //     stripeInfo={state.stripeInfo} 
-        //     company={state.company} 
-        //     isShowingCheckout={false} 
-        //     setIsShowingCheckout={() => {}} 
-        //     boardUID={companyUID} 
-        //     isToolTipOpen={false} 
-        //     setIsToolTipOpen={() => {}} 
-        //     setCurrentTooltip={actions.setCurrentTooltip || (() => {})} 
-        //     handleModalOpen={actions.handleModalOpen} 
-        //     handleToolTipOpen={actions.handleToolTipOpen}
-        //   />
-        )}
-      </ModalShell>
+    const handleModalOpen = (name: string) => {
+        setModalName(name)
+        setIsShowingModal(true)
+        setIsToolTipOpen(false)
+    }
 
-      {/* ========================================== */}
-      {/*  PRIMARY INTERFACE DASHBOARD SURFACE      */}
-      {/* ========================================== */}
-      <div className="grow h-full overflow-y-auto p-8 print:w-full">
-        {/* Dynamic header row targeting dates, export interactions, and filters */}
-        <ReportHeader state={state} actions={actions} />
-        
-        <div className="mt-6">
-          <StandardTable 
-            name="reports" 
-            data={state.trips || []} 
-            columns={state.activeHeaders} 
-            companyInfo={state.company}
-          >
-            {sortedTrips.map((tripItem: any, index: number) => (
-              <TableRow 
-                key={tripItem.id || index}
-                index={index}
-                name="reports"
-                item={tripItem}
-                allClients={state.clients}
-                allEmployees={state.drivers}
-                headerTitles={state.activeHeaders}
-                onPress={(idx, data) => {
-                  console.log(`Row action pressed at index ${idx}`, data);
-                }}
-              />
-            ))}
-          </StandardTable>
+    const handleModalClose = (reset: boolean) => {
+        setIsShowingModal(false)
+        if (reset) reloadData()
+    }
+
+    const handleToolTipOpen = (name: string, e: any) => {
+        setToolTipName(name)
+        setToolTipTrigger(e.target)
+        setIsToolTipOpen(true)
+        setToolTipPosition(name === 'boardSettings' ? 'bottom-end' : 'bottom')
+    }
+
+    const handleToolTipClose = () => {
+        setToolTipTrigger(null)
+        setIsToolTipOpen(false)
+    }
+
+    const handleToolTipItemPressed = (name: string, data: any) => {
+        if (name === 'filterProfiles') {
+            actions.setSelectedDriverUID(data)
+            handleToolTipClose()
+        } else if (name === 'visibleHeaders') {
+            if (companySettings) updateVisibleHeaders(data)
+        } else {
+            handleModalOpen(name)
+        }
+    }
+
+    async function updateVisibleHeaders(header: any) {
+        await UpdateTableSettings(companySettings.id, dbURL, header.uid, header.title, header.isHidden, companySettings.headers, null)
+            .catch((err) => console.error('table settings error: ', err))
+        reloadData()
+    }
+
+    function dateDidChange(newDate: Date) {
+        actions.setFilterDate(newDate)
+        reloadData()
+    }
+
+    return (
+        <div className='w-[calc(100%-80px)] ml-20 h-full bg-surface-soft flex flex-row relative print:ml-0 print:w-full print:bg-white'>
+            <WorkspaceModal name={ modalName } type={ 0 } isOpen={ isShowingModal } handleClose={ handleModalClose } currentUser={ currentUser } setRefreshUID={ actions.setRefreshUID } company={ company } companyUID={ companyUID } stripeInfo={ state.stripeInfo } companySettings={ companySettings } isToolTipOpen={ isToolTipOpen } setIsToolTipOpen={ setIsToolTipOpen } setCurrentTooltip={ setCurrentTooltip } dbURL={ dbURL } handleModalOpen={ handleModalOpen } handleToolTipOpen={ handleToolTipOpen }/>
+
+            <Tooltip name={ toolTipName } currentUser={ currentUser } company={ company } companySettings={ companySettings } profiles={ drivers } isOpen={ isToolTipOpen } trigger={ toolTipTrigger } position={ toolTipPosition } onItemPress={ handleToolTipItemPressed } handleClose={ handleToolTipClose } autoCompleteData={ [] } data={ null }>
+                <></>
+            </Tooltip>
+
+            <WorkspaceNav currentTab='reports' companyUID={ companyUID } isOpen={ isWorkspaceNavOpen } setIsOpen={ setIsWorkspaceNavOpen } companyInfo={ company } handleModalOpen={ handleModalOpen }/>
+
+            <main className='flex h-full min-w-0 grow flex-col print:h-auto'>
+                {
+                    (!state.isLoading && IsAccessGranted(company, currentUser) !== 'approved') ?
+                        <AccessDenied area='reports'/>
+                    :
+                        <>
+                            <WorkspacePageHeader
+                                title='Reports'
+                                subtitle={ `Driver manifest for ${dayjs(filterDate).format('dddd, MMMM D, YYYY')}` }
+                                primaryLabel='Print manifest'
+                                primaryIcon={ <Printer aria-hidden="true" className='h-4 w-4'/> }
+                                primaryVariant='secondary'
+                                onPrimary={ () => window.print() }
+                                memberCount={ company?.allActiveRoles?.length ?? 0 }
+                                handleModalOpen={ handleModalOpen }
+                                handleToolTipOpen={ handleToolTipOpen }
+                                footer={
+                                    !state.isLoading && !isLocked &&
+                                        <span className='text-sm font-medium text-ink-900' aria-live='polite'>
+                                            { trips.length } { trips.length === 1 ? 'trip' : 'trips' } on this manifest
+                                        </span>
+                                }>
+                                <DateNavigator date={ filterDate } onChange={ dateDidChange }/>
+                                <ToolbarDivider/>
+                                <DriverFilter drivers={ drivers } selectedDriverUID={ selectedDriverUID } setSelectedDriverUID={ actions.setSelectedDriverUID } handleToolTipOpen={ handleToolTipOpen }/>
+                                <ColumnsButton companySettings={ companySettings } handleToolTipOpen={ handleToolTipOpen }/>
+                            </WorkspacePageHeader>
+
+                            <div className='relative min-h-0 grow overflow-auto px-8 py-4 print:overflow-visible print:p-0'>
+                                <ReportPrintHeader company={ company } drivers={ drivers } selectedDriverUID={ selectedDriverUID } filterDate={ filterDate }/>
+
+                                {
+                                    (state.isLoading) ?
+                                        <ListSkeleton label='Loading manifest…' className='px-0 pt-0'/>
+                                    : (isLocked) ?
+                                        <EmptyState
+                                            icon={ <Lock aria-hidden="true" strokeWidth={1.75}/> }
+                                            title='Reports are on the Standard plan'
+                                            description='Upgrade this workspace to view and print daily driver manifests.'
+                                            action={
+                                                <Button variant='primary' onClick={ () => handleModalOpen('pricing') } className='h-10 px-4 font-semibold'>
+                                                    View plans
+                                                </Button>
+                                            }/>
+                                    : (trips.length === 0) ?
+                                        <EmptyState
+                                            icon={ <FileText aria-hidden="true" strokeWidth={1.75}/> }
+                                            title='No trips on this manifest'
+                                            description={ selectedDriverUID ? 'This driver has no trips on this day. Try another date or driver.' : 'No trips are scheduled for this day. Try another date.' }/>
+                                    :
+                                        <div className='min-w-[720px]'>
+                                            <div className='flex pb-1 text-xs font-semibold uppercase tracking-wide text-ink-500 print:border-b print:border-ink-400 print:text-ink-900'>
+                                                {
+                                                    columns.map((header: any) => (
+                                                        <div key={ header.uid } className={ header.uid === NAME_COLUMN ? 'truncate pl-4 pr-3' : 'truncate px-3 text-center' } style={ ReportColumnStyle(header) }>
+                                                            { header.title }
+                                                        </div>
+                                                    ))
+                                                }
+                                            </div>
+                                            {
+                                                SortByPickupTime(trips).map((item: any, i: number) => (
+                                                    <ReportRow key={ item.id || i } item={ item } columns={ columns } clients={ clients } drivers={ drivers }/>
+                                                ))
+                                            }
+                                        </div>
+                                }
+                            </div>
+                        </>
+                }
+            </main>
         </div>
-      </div>
-    </div>
-  );
+    )
 };
+
 
 export default Organizer;

@@ -1,7 +1,7 @@
 import { FC, ReactNode } from "react";
 import Image from 'next/image';
 import { CalendarDays, ChevronDown, FileText, Home, User, Users } from 'lucide-react';
-import { cn } from '@/lib/Utils';
+import { cn } from '@/lib/cn';
 
 
 

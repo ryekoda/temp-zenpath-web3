@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { CalendarDays, Car, Check } from 'lucide-react';
-import { cn } from '@/lib/Utils';
+import { cn } from '@/lib/cn';
 import StatusPill from './StatusPill';
 import { GetInitials, sampleTrips, TripStatus } from './sampleData';
 

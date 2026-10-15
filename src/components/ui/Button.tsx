@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { cva, VariantProps } from 'class-variance-authority'
 import { Loader2 } from 'lucide-react'
-import { cn } from '@/lib/Utils'
+import { cn } from '@/lib/cn';
 
 
 
@@ -24,7 +24,9 @@ const buttonVariants = cva(
         primary:
           'rounded-[var(--radius-button)] bg-brand-600 text-white transition-colors duration-200 hover:bg-brand-700 focus:ring-brand-600',
         secondary:
-          'rounded-[var(--radius-button)] border border-line bg-white text-ink-900 transition-colors duration-200 hover:bg-surface-soft focus:ring-brand-600'
+          'rounded-[var(--radius-button)] border border-line bg-white text-ink-900 transition-colors duration-200 hover:bg-surface-soft focus:ring-brand-600',
+        danger:
+          'rounded-[var(--radius-button)] bg-status-danger text-white transition-colors duration-200 hover:bg-status-danger/90 focus:ring-status-danger'
       },
       size: {
         default: 'h-10 py-2 px-4',

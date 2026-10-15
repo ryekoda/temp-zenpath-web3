@@ -1,5 +1,11 @@
 import { GetActivity } from '@/helpers/database/Activity';
-import { CapitalizeFirstLetterOfEachWord } from '@/lib/Utils';
+import { CapitalizeFirstLetterOfEachWord } from '@/lib/format/text';
+
+
+// Mapbox paint and marker options need plain color strings, so these mirror the design tokens
+// (--color-brand-600, --color-brand-700, --color-ink-900) from globals.css.
+const BRAND_600 = '#0FA978'
+const BRAND_700 = '#087F5B'
 
 
 
@@ -8,15 +14,13 @@ export function InitMap(mapboxgl: any, map: any, mapContainer: any, lng: any, la
     map.current = new mapboxgl.Map({
     container: mapContainer.current,
     accessToken: process.env.NEXT_PUBLIC_REACT_APP_MAPBOX_ACCESS_TOKEN,
-    style: 'mapbox://styles/mapbox/streets-v11',
+    style: 'mapbox://styles/mapbox/streets-v12',
     center: [lng, lat],
     zoom: zoom,
   });
 
   // Zoom controls
-  var nav = new mapboxgl.NavigationControl();
-  map.current.addControl(nav, 'bottom-left');
-  map.current.addControl(new mapboxgl.NavigationControl());
+  map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
   // Map Focus Position
   if (!map.current) return;
@@ -141,95 +145,90 @@ export function GenerateMatchedLocations(locations: any[], trips: any) {
 }
 
 
+// Pickup pins for the day's trips (or the one selected trip), in brand green.
 export async function GenerateMarkers(locations: any[], selectedTrip: any, mapboxgl: any, map: any) {
-  if (selectedTrip) {
-    new mapboxgl.Marker().setLngLat([locations[0].lng, locations[0].lat]).addTo(map.current)
-  } else {
-    if (map.current) {
-      locations.map((location: any) =>
-        new mapboxgl.Marker().setLngLat([location.lng, location.lat]).addTo(map.current!)
-      );
-    }
-  }
+  if (!map.current) return
+
+  const pins = selectedTrip ? locations.slice(0, 1) : locations
+  pins.forEach((location: any) =>
+    new mapboxgl.Marker({ color: BRAND_600 }).setLngLat([location.lng, location.lat]).addTo(map.current)
+  );
+}
+
+
+// Round badge with the driver's initials, used as their live-location marker.
+function CreateDriverMarkerElement(userUID: string, driverData: any) {
+  const element = document.createElement('div');
+  element.id = userUID;
+  element.className = 'zenpath-driver-marker';
+  element.textContent = driverData ? `${(driverData.fName || '').charAt(0)}${(driverData.lName || '').charAt(0)}`.toUpperCase() : '';
+  element.setAttribute('aria-label', DriverName(driverData));
+  return element
+}
+
+function DriverName(driverData: any) {
+  return driverData ? CapitalizeFirstLetterOfEachWord(`${driverData.fName || ''} ${driverData.lName || ''}`.trim()) : 'Driver'
+}
+
+// Popup content built as DOM (not an HTML string) so names can't inject markup.
+function CreateDriverPopup(mapboxgl: any, driverData: any) {
+  const content = document.createElement('div');
+  const title = document.createElement('p');
+  title.className = 'zenpath-popup-title';
+  title.textContent = DriverName(driverData);
+  const subtitle = document.createElement('p');
+  subtitle.className = 'zenpath-popup-subtitle';
+  subtitle.textContent = 'On shift · live location';
+  content.append(title, subtitle);
+
+  return new mapboxgl.Popup({ offset: 24, closeButton: false }).setDOMContent(content)
 }
 
 
 export async function GenerateDriverCurrentLocationMarker(location: any, activeDrivers: any[], mapboxgl: any, map: any) {
   const userUID = location.userUID
-  const driverData = activeDrivers.find(({ userUID }) => userUID === userUID);
+  const driverData = activeDrivers.find((driver) => driver.userUID === userUID);
   
   const coordinates = location.coordinates
   let annotation = document.getElementById(userUID);
 
   if (annotation) {
-    // console.log('HERE');
     const marker = new mapboxgl.Marker(annotation)
-    marker.setPopup(
-      new mapboxgl.Popup({ offset: 25 }) // add popups
-      .setHTML(
-        `<h3>${ driverData ? CapitalizeFirstLetterOfEachWord(driverData.fName + ' ' + driverData.lName) : 'Driver'}</h3>`
-      )
-    )
+    marker.setPopup(CreateDriverPopup(mapboxgl, driverData))
     marker.setLngLat([coordinates.lng, coordinates.lat])
   } else {
-    // console.log('Not HERE');
-    annotation = document.createElement('div');
-    annotation.className = 'marker';
-    annotation.id = userUID;
-    annotation.style.backgroundImage = `url(https://cdn-icons-png.flaticon.com/512/11536/11536524.png)`;
-    const width = 40
-    const height = 40
-    annotation.style.width = `${width}px`;
-    annotation.style.height = `${height}px`;
-    annotation.style.backgroundSize = '100%';
+    annotation = CreateDriverMarkerElement(userUID, driverData)
     const marker = new mapboxgl.Marker(annotation)
-    marker.setPopup(
-      new mapboxgl.Popup({ offset: 25 }) // add popups
-      .setHTML(
-      `<h3>${ driverData ? CapitalizeFirstLetterOfEachWord(driverData.fName + ' ' + driverData.lName) : 'Driver'}</h3>`
-      )
-    )
+    marker.setPopup(CreateDriverPopup(mapboxgl, driverData))
     marker.setLngLat([coordinates.lng, coordinates.lat]).addTo(map.current!);
   }
 }
 
 
+// Driving route between a client's two trip legs, drawn as a green line with a white edge.
 export async function GenerateRoute(mapboxgl: any, map: any, start: any, end: any, index: number) {
-  const query = await fetch(`https://api.mapbox.com/directions/v5/mapbox/cycling/${start[0]},${start[1]};${end[0]},${end[1]}?overview=full&steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`, { method: 'GET' });
+  const query = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?overview=full&geometries=geojson&access_token=${mapboxgl.accessToken}`, { method: 'GET' });
+  const json = await query.json().catch(() => null);
+  const route = json?.routes?.[0]?.geometry?.coordinates;
+  if (!route) return
 
-  const json = await query.json();
-  const data = json.routes[0];
-  const route = data.geometry.coordinates;
-  const geojson = {
-    type: 'Feature',
-    properties: {},
-    geometry: {
-      type: 'LineString',
-      coordinates: route
+  const id = `route${index}`
+  const geojson = { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: route } };
+
+  const draw = () => {
+    if (map.getSource(id)) {
+      map.getSource(id).setData(geojson);
+      return
     }
-  };
 
-  if (map.getSource('route')) {
-    map.getSource(`route${index}`).setData(geojson);
-  } else {
-    map.addLayer({
-      id: `route${index}`,
-      type: 'line',
-      source: {
-        type: 'geojson',
-        data: geojson
-      },
-      layout: {
-        'line-join': 'round',
-        'line-cap': 'round'
-      },
-      paint: {
-        'line-color': 'black',
-        'line-width': 5,
-        'line-opacity': 0.75
-      }
-    });
+    map.addSource(id, { type: 'geojson', data: geojson });
+    map.addLayer({ id: `${id}-edge`, type: 'line', source: id, layout: { 'line-join': 'round', 'line-cap': 'round' }, paint: { 'line-color': '#FFFFFF', 'line-width': 8, 'line-opacity': 0.9 } });
+    map.addLayer({ id, type: 'line', source: id, layout: { 'line-join': 'round', 'line-cap': 'round' }, paint: { 'line-color': BRAND_700, 'line-width': 4.5, 'line-opacity': 0.9 } });
   }
+
+  // Layers can only be added once the map style has loaded
+  if (map.isStyleLoaded()) draw()
+  else map.once('load', draw)
 }
 
 

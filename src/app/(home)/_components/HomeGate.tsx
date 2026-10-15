@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import WorkspacesView from './workspaces/WorkspacesView';
 import SplashPage from './splash/SplashPage';
 import Restriction from "@/components/ui/Restriction";
-import LoadingScreen from '@/components/ui/LoadingScreen';
+import LoadingScreen from '@/components/ui/loading/LoadingScreen';
 
 
 

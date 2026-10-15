@@ -6,7 +6,7 @@ import { useCompanySettings } from '@/hooks/useCompanySettings';
 import useTrips from '@/hooks/useTrips';
 import useClients from '@/hooks/useClients';
 import useEmployees from '@/hooks/useEmployees';
-import { HeaderTitles } from '@/lib/GlobalFunctions';
+import { HeaderTitles } from '@/lib/tables/columns';
 
 interface ReportOrganizerData {
     state: {

@@ -17,7 +17,7 @@ export const FIELD_IDS = {
     TRIP_DESTINATION:  '32168',
 } as const;
 
-export function CalculateSectionWidth(uid: string): string {
+export function ReportColumnWidth(uid: string): string {
     const widthMap: Record<string, string> = {
         [FIELD_IDS.EMPLOYEE_NAME]:     '820px',
         [FIELD_IDS.EMPLOYEE_POSITION]: '120px',
@@ -44,7 +44,7 @@ export function CalculateSectionWidth(uid: string): string {
     return widthMap[uid] ?? '200px';
 }
 
-// export function CalculateSectionWidth(uid: string): string {
+// export function ReportColumnWidth(uid: string): string {
 //     const widthMap: Record<string, string> = {
 //         [FIELD_IDS.EMPLOYEE_NAME]:     '50%',
 //         [FIELD_IDS.EMPLOYEE_POSITION]: '10%',

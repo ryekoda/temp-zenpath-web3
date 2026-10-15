@@ -2,7 +2,8 @@ import { FC, useState } from "react";
 import Link from 'next/link';
 import { ArrowRight, Inbox, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { CapitalizeFirstLetterOfEachWord, FormatDate } from '@/lib/GlobalFunctions';
+import { CapitalizeFirstLetterOfEachWord } from '@/lib/format/text';
+import { FormatDate } from '@/lib/format/dates';
 import { SavePendingInviteResponse } from './_utils/Actions';
 
 

@@ -1,0 +1,136 @@
+/* Column header cell for workspace tables (planner, employees, clients). */
+.AFgih {
+    position: relative;
+    z-index: 3000;
+    padding: 6px 0px 6px 0px;
+    border-radius: 8px;
+    transition: background-color 150ms ease;
+  }
+
+  .AFgih:hover {
+    cursor: pointer;
+    background-color: var(--color-surface-soft);
+  }
+
+  /* Sort arrow: appears above the title on hover, and stays while that column is sorted */
+  .hU4kO {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    margin-top: -20px;
+  }
+
+  .hU4kO:hover {
+    cursor: pointer;
+  }
+
+  /* Title of the first (name) column: fixed, left-aligned to match the row titles */
+  .eM3Pg {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background-color: transparent;
+    border: 1px solid transparent;
+    color: var(--color-ink-500);
+    box-sizing: border-box;
+    padding-left: 10px;
+  }
+
+  /* Titles of the other columns: centered and editable in place */
+  .umyUh {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background-color: transparent;
+    border: 1px solid transparent;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+    color: var(--color-ink-500);
+    box-sizing: border-box;
+    border-radius: 6px;
+    width: 100%;
+    padding: 2px 4px;
+    transition: border-color 150ms ease, background-color 150ms ease;
+  }
+
+  .umyUh:hover {
+    border: 1px dashed var(--color-border);
+  }
+
+  .umyUh:focus {
+    outline: none;
+    border: 1px solid var(--color-brand-600);
+    background-color: var(--color-surface);
+    color: var(--color-ink-900);
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  .AFgih:hover .hU4kO {
+    display: block;
+  }
+
+  .GWOxc {
+    width: 15px;
+    height: 100%;
+    padding: 0px 2px 0px 6px;
+    display: none;
+  }
+
+  .sAxy7 {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    border-radius: 3px;
+  }
+
+  .sAxy7:hover {
+    background-color: var(--color-surface-soft);
+  }
+
+  .AFgih:hover .GWOxc {
+    display: block;
+  }
+
+  .rj6V8 {
+    max-width: 100%;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+
+  /* Drag handle on the right edge for resizing a column */
+  .JwYBs {
+    width: 3px;
+    cursor: ew-resize;
+    padding: 4px 0 0;
+    position: absolute;
+    top: 6px;
+    right: 0;
+    bottom: 6px;
+    z-index: 100;
+    background-color: var(--color-brand-500);
+    border-radius: 3px;
+    opacity: 0.0;
+  }
+
+  .JwYBs:hover {
+    opacity: 1.0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .AFgih, .umyUh { transition: none; }
+  }

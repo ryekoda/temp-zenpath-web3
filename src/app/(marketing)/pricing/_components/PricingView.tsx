@@ -5,8 +5,8 @@ import { ChevronDown } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import Container from '@/components/ui/Container';
 import AccentLine from '@/components/ui/AccentLine';
-import { GetPlans, GetTeamSizeOptions } from '@/lib/GlobalFunctions';
-import { cn } from '@/lib/Utils';
+import { GetPlans, GetTeamSizeOptions } from '@/lib/billing/plans';
+import { cn } from '@/lib/cn';
 import PlanCard, { Plan } from './PlanCard';
 
 

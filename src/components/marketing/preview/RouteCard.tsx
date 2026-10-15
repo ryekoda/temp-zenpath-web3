@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { MapPin } from 'lucide-react';
-import { cn } from '@/lib/Utils';
+import { cn } from '@/lib/cn';
 import StatusPill from './StatusPill';
 import { sampleRoute } from './sampleData';
 

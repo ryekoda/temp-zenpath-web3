@@ -1,6 +1,6 @@
 import { FIELD_IDS } from '../fields';
 import { FormatData } from '../formatData';
-import { GetUserInfo } from '@/lib/Utils';
+import { GetUserInfo } from '@/lib/workspace/members';
 
 export function getReportData(
     item: Record<string, any>,

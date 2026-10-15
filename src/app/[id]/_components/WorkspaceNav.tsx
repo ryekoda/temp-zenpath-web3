@@ -3,8 +3,10 @@ import Link from 'next/link';
 import { BarChart3, CalendarDays, ChevronLeft, ChevronRight, Contact, Sparkles, Users } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import WorkspaceCover from '@/components/workspace/WorkspaceCover';
-import { CapitalizeFirstLetter, cn } from '@/lib/Utils';
-import { CapitalizeFirstLetterOfEachWord, SubscriptionStatus } from '@/lib/GlobalFunctions';
+import { CapitalizeFirstLetter } from '@/lib/format/text';
+import { cn } from '@/lib/cn';
+import { CapitalizeFirstLetterOfEachWord } from '@/lib/format/text';
+import { SubscriptionStatus } from '@/lib/billing/plans';
 
 
 

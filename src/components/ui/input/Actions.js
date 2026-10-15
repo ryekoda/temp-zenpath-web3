@@ -1,4 +1,4 @@
-import { CapitalizeFirstLetterOfEachWord } from '@/lib/GlobalFunctions';
+import { CapitalizeFirstLetterOfEachWord } from '@/lib/format/text';
 
 
 

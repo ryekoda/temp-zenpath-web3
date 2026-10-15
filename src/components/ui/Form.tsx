@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
 import Input from '@/components/ui/input/Input';
 import { GetTaggedIndex } from '@/helpers/database/TaggedIndex';
-
-import './Form.css';
+import { cn } from '@/lib/cn';
 
 
 
@@ -154,15 +153,32 @@ const Form: React.FC<Props> = ({ name, companyUID, fields, setFields, selectedDa
                     ))
                 }
 
-                <div className='mt-[12px]'>
-                    { (errorMessage) && <p className='lap3c'>{ errorMessage }</p> }
+                <div className='mt-6'>
+                    { (errorMessage) && <p role='alert' className='mb-3 rounded-[var(--radius-button)] bg-status-danger-soft px-3 py-2 text-sm text-ink-900'>{ errorMessage }</p> }
                     <Input name='' frameType='submit' type='submit' inputValue={ submitButtonTitle } isDisabled={ isSubmitButtonDisabled }/>
                 </div>
             </form>
 
             {
               (name === 'edit') &&
-                <button className={ isShowingConfirmDeleteButton ? 'vex20' : 'AYYBu' } onClick={ (e) => deleteButtonPressed(e) } disabled={ isDeleteButtonDisabled }>{ isShowingConfirmDeleteButton ? 'Confirm Delete' : 'Delete' }</button>
+                <div className='mt-3 flex items-center justify-center gap-2'>
+                    <button
+                        type='button'
+                        onClick={ (e) => deleteButtonPressed(e) }
+                        disabled={ isDeleteButtonDisabled }
+                        className={ cn(
+                            'h-10 rounded-[var(--radius-button)] px-4 text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-status-danger disabled:opacity-60',
+                            isShowingConfirmDeleteButton ? 'bg-status-danger text-white hover:bg-status-danger/90' : 'text-ink-500 hover:bg-status-danger-soft hover:text-status-danger'
+                        ) }>
+                        { isShowingConfirmDeleteButton ? 'Yes, delete' : 'Delete' }
+                    </button>
+                    {
+                        isShowingConfirmDeleteButton &&
+                            <button type='button' onClick={ () => setIsShowingConfirmDeleteButton(false) } className='h-10 rounded-[var(--radius-button)] px-4 text-sm font-medium text-ink-700 hover:bg-surface-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600'>
+                                Keep it
+                            </button>
+                    }
+                </div>
             }
         </div>
     )

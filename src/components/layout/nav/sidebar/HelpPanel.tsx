@@ -1,8 +1,8 @@
 "use client"
 import { FC, useState } from "react";
 import { Mail } from 'lucide-react';
-import { CapitalizeFirstLetterOfEachWord } from '@/lib/GlobalFunctions';
-import { cn } from '@/lib/Utils';
+import { CapitalizeFirstLetterOfEachWord } from '@/lib/format/text';
+import { cn } from '@/lib/cn';
 
 
 

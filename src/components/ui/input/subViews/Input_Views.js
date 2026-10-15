@@ -1,5 +1,4 @@
 import React from 'react';
-import Checkbox from '@mui/material/Checkbox';
 
 
 
@@ -8,10 +7,10 @@ export const Radio = ( props ) => {
     const { title, isChecked, onChange } = props
 
     return (
-        <div className='siy0T' id='w837n'>
-            <input className='B42QN' name='radioGroup' type='radio' checked={ isChecked } onChange={ () => onChange() }/>
-            <p className='E3x4E'>{ title }</p>
-        </div>
+        <label className='mt-2 flex cursor-pointer items-center gap-2.5 text-sm text-ink-900'>
+            <input className='h-4 w-4 accent-[var(--color-brand-600)]' name='radioGroup' type='radio' checked={ isChecked } onChange={ () => onChange() }/>
+            { title }
+        </label>
     )
 }
 
@@ -20,12 +19,9 @@ export const Checkbox_Container = ( props ) => {
     const { title, isChecked, onChange } = props
 
     return (
-        <div className='siy0T' id='Uzi5P'>
-            <Checkbox name={ title } checked={ isChecked } onChange={ (e) => onChange(e) } color='default' sx={{ color: '#717FF6', '&.Mui-checked': { color: '#717FF6' } }}/>
-            {
-                title &&
-                    <p className='y9ek2' style={{ marginTop: '10px' }}>{ title }</p>
-            }
-        </div>
+        <label className='mb-2 flex w-fit cursor-pointer items-center gap-2.5 text-sm text-ink-900'>
+            <input className='h-4 w-4 rounded accent-[var(--color-brand-600)]' name={ title } type='checkbox' checked={ isChecked } onChange={ (e) => onChange(e) }/>
+            { title }
+        </label>
     )
 }
