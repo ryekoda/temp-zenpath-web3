@@ -1,6 +1,6 @@
 "use client"
 import { FC, useState, useRef, useEffect } from 'react';
-import { Users } from 'lucide-react';
+import { SearchX, Users } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { UpdateEmployee } from '@/helpers/database/Employees';
 import { UpdateTableSettings } from '@/helpers/database/CompanySettings';
@@ -15,6 +15,7 @@ import Tooltip from '@/components/tooltips/Tooltip';
 import WorkspaceNav from '@/app/[id]/_components/WorkspaceNav';
 import WorkspacePageHeader, { ColumnsButton } from '@/app/[id]/_components/WorkspacePageHeader';
 import { AccessDenied, EmptyState } from '@/app/[id]/_components/WorkspaceStates';
+import { SearchField } from '@/app/[id]/_components/WorkspaceFilters';
 import ListSkeleton from '@/components/ui/loading/ListSkeleton';
 import Form from '@/components/ui/Form';
 import { Button } from '@/components/ui/Button';
@@ -26,6 +27,7 @@ import { HeaderTitles } from '@/lib/tables/columns';
 import EmployeeCell from './_components/EmployeeCell';
 import LinkAccountMenu from './_components/LinkAccountMenu';
 import { FormData, Save, Delete, ErrorMessage, Reload } from './_utils/Actions';
+import { FilterEmployees } from './_utils/filterEmployees';
 
 
 
@@ -38,9 +40,11 @@ const Organizer: FC<Props> = ({ companyUID }) => {
     const [isWorkspaceNavOpen, setIsWorkspaceNavOpen] = useState(true)
     const [refreshUID, setRefreshUID] = useState()
     const [isLoading, setIsLoading] = useState(true)
-    const [lastDoc, setLastDoc] = useState()
     const [selectedEmployeeUID, setSelectedEmployeeUID] = useState<any>()
-    const employees = useEmployees(companyUID, null, lastDoc, refreshUID, true, dbURL, isLoading, setIsLoading)
+    // The whole roster loads at once, so search filters it right here as you type
+    const employees = useEmployees(companyUID, null, null, refreshUID, true, dbURL, isLoading, setIsLoading)
+    const [searchQuery, setSearchQuery] = useState('')
+    const isSearchActive = searchQuery.trim() !== ''
     const trips = useTrips(companyUID, null, selectedEmployeeUID, null, null, null, refreshUID, true, dbURL, isLoading, setIsLoading)
     const activity = useActivity(trips.map(a => a['id']), null, null, null, refreshUID, true, dbURL, isLoading, setIsLoading)
     const clients = useClients(companyUID, trips.map(a => a['71130']), null, refreshUID, true, dbURL, isLoading, setIsLoading, true)
@@ -48,6 +52,7 @@ const Organizer: FC<Props> = ({ companyUID }) => {
     
     const company: any = useCompany(companyUID, stripeInfo, true, refreshUID, dbURL)
     const companySettings: any = useCompanySettings(companyUID, 'employees', refreshUID, true, dbURL)
+    const listedEmployees: any[] = FilterEmployees(employees, searchQuery, companySettings)
     const popperTrigger = useRef();
     const popperTriggers = useRef([]);
     const [fields, setFields] = useState<any[]>([])
@@ -216,9 +221,8 @@ const Organizer: FC<Props> = ({ companyUID }) => {
         }
     }
 
-    function loadMoreData() { 
-        // LoadMoreItems(employees, setLastDoc)
-    }
+    // The whole roster is already loaded, so there's never more to fetch
+    function loadMoreData() {}
 
     function reloadData() { 
         setModalName('create')
@@ -255,7 +259,14 @@ const Organizer: FC<Props> = ({ companyUID }) => {
                                 memberCount={ company?.allActiveRoles?.length ?? 0 }
                                 handleModalOpen={ handleModalOpen }
                                 handleToolTipOpen={ handleToolTipOpen }>
+                                <SearchField value={ searchQuery } onChange={ setSearchQuery } label='Search employees' placeholder='Search by name, position or phone'/>
                                 <ColumnsButton companySettings={ companySettings } handleToolTipOpen={ handleToolTipOpen }/>
+                                {
+                                    isSearchActive &&
+                                        <p aria-live='polite' className='text-sm text-ink-500'>
+                                            { listedEmployees.length === 1 ? '1 match' : `${listedEmployees.length} matches` }
+                                        </p>
+                                }
                             </WorkspacePageHeader>
 
                             <div className='relative min-h-0 grow'>
@@ -264,6 +275,16 @@ const Organizer: FC<Props> = ({ companyUID }) => {
                                         <ListSkeleton label='Loading employees…' showAvatar/>
                                     : (IsAccessGranted(company, currentUser) !== 'approved') ?
                                         <></>
+                                    : (isSearchActive && listedEmployees.length === 0) ?
+                                        <EmptyState
+                                            icon={ <SearchX aria-hidden="true" strokeWidth={1.75}/> }
+                                            title={ `No employees match “${searchQuery.trim()}”` }
+                                            description='Search by first or last name, position, or any part of a phone number.'
+                                            action={
+                                                <Button variant='secondary' onClick={ () => setSearchQuery('') } className='h-10 px-4'>
+                                                    Clear search
+                                                </Button>
+                                            }/>
                                     : (employees.length === 0) ?
                                         <EmptyState
                                             icon={ <Users aria-hidden="true" strokeWidth={1.75}/> }
@@ -277,9 +298,9 @@ const Organizer: FC<Props> = ({ companyUID }) => {
                                     :
                                         // List pads itself 50px per side; [&>div]:!px-8 lines the table up with the header above it.
                                         <div className='h-full overflow-auto pt-4 [&>div]:!px-8'>
-                                            <List name='employees' data={ employees } loadMoreData={ loadMoreData } companyInfo={ company } companySettings={ companySettings } showHeaders={ true } reloadData={ reloadData } popperTrigger={ popperTrigger } popperTriggers={ popperTriggers } isToolTipOpen={ isToolTipOpen } setIsToolTipOpen={ setIsToolTipOpen } selectedData={ selectedData } setSelectedData={ setSelectedData } selectedItem={ selectedItem } sortDirection2={ sortDirection } setSortDirection2={ setSortDirection } sortSectionUID2={ sortSectionUID } setSortSectionUID2={ setSortSectionUID } boardUID={ companyUID } itemSpecs={ itemSpecs } setItemSpecs={ setItemSpecs } handleToolTipOpen={ handleToolTipOpen } dbURL={ dbURL }>
+                                            <List name='employees' data={ listedEmployees } loadMoreData={ loadMoreData } showLoadMore={ false } companyInfo={ company } companySettings={ companySettings } showHeaders={ true } reloadData={ reloadData } popperTrigger={ popperTrigger } popperTriggers={ popperTriggers } isToolTipOpen={ isToolTipOpen } setIsToolTipOpen={ setIsToolTipOpen } selectedData={ selectedData } setSelectedData={ setSelectedData } selectedItem={ selectedItem } sortDirection2={ sortDirection } setSortDirection2={ setSortDirection } sortSectionUID2={ sortSectionUID } setSortSectionUID2={ setSortSectionUID } boardUID={ companyUID } itemSpecs={ itemSpecs } setItemSpecs={ setItemSpecs } handleToolTipOpen={ handleToolTipOpen } dbURL={ dbURL }>
                                                 {
-                                                    SortListData(employees, sortSectionUID, sortDirection).map((item: any, i: any) => (
+                                                    SortListData(listedEmployees, sortSectionUID, sortDirection).map((item: any, i: any) => (
                                                         <EmployeeCell key={ item.id } index={ i } name='employees' item={ item } allClients={ clients } allEmployees={ employees } showHeaders={ true } headerTitles={ HeaderTitles(companySettings, true) } allUsers={ clients } itemSpecs={ itemSpecs } onPress={ cellPressed }/>
                                                     ))
                                                 }

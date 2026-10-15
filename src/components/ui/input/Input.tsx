@@ -68,17 +68,10 @@ const Input: React.FC<Props> = ({ name, title, frameType, type, inputValue, plac
   }, [ selectedItem ])
  
 
+  // Date and time pickers: hand the form a plain Date. A cleared or half-typed picker gives null or an
+  // invalid date; save no value rather than an Invalid Date
   function InputChanged(e: any) {
-    const newValue = e
-    let item: any = { target: { 'name': name } }
-    
-    if (name === '97264' || name === '16538') {
-      // A cleared or half-typed picker gives null or an invalid date; save no value rather than an Invalid Date
-      item.target['value'] = newValue?.isValid() ? newValue.toDate() : null
-    } else {
-      item.target['value'] = newValue
-    }
-
+    const item: any = { target: { 'name': name, 'value': e?.isValid() ? e.toDate() : null } }
     onChange(item)
   }
 
@@ -171,7 +164,7 @@ const Input: React.FC<Props> = ({ name, title, frameType, type, inputValue, plac
           </LocalizationProvider>
         : frameType === 'date' ?
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker value={ value ? dayjs(value) : dayjs(new Date()) } onChange={ (e) => InputChanged(e) } sx={ pickerSx } slotProps={{ textField: { id: fieldId } }}/>
+            <DatePicker value={ value ? dayjs(value) : name === '16538' ? dayjs(new Date()) : null } onChange={ (e) => InputChanged(e) } sx={ pickerSx } slotProps={{ textField: { id: fieldId } }}/>
           </LocalizationProvider>
         : frameType === 'checkbox' ?
           <Checkbox_Container isChecked={ isChecked } onChange={ checkboxChanged }/>

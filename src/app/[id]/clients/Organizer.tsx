@@ -1,6 +1,6 @@
 "use client"
 import { FC, useState, useRef, useEffect } from 'react';
-import { Contact, History } from 'lucide-react';
+import { Contact, History, SearchX } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useCompany } from '@/hooks/useCompany';
 import { useCompanySettings } from '@/hooks/useCompanySettings';
@@ -8,11 +8,13 @@ import { UpdateTableSettings } from '@/helpers/database/CompanySettings';
 import useEmployees from '@/hooks/useEmployees';
 import useClients from '@/hooks/useClients';
 import useClientPages from '@/hooks/useClientPages';
+import useClientSearch, { CLIENT_SEARCH_LIMIT } from '@/hooks/useClientSearch';
 import List from '@/components/list/List';
 import WorkspaceModal from '@/components/modals/WorkspaceModal';
 import WorkspaceNav from '@/app/[id]/_components/WorkspaceNav';
 import WorkspacePageHeader, { ColumnsButton } from '@/app/[id]/_components/WorkspacePageHeader';
 import { AccessDenied, EmptyState } from '@/app/[id]/_components/WorkspaceStates';
+import { SearchField } from '@/app/[id]/_components/WorkspaceFilters';
 import ListSkeleton from '@/components/ui/loading/ListSkeleton';
 import Tooltip from '@/components/tooltips/Tooltip';
 import { IsAccessGranted } from '@/lib/workspace/access';
@@ -39,7 +41,12 @@ const Organizer: FC<Props> = ({ companyUID }) => {
     const [refreshUID, setRefreshUID] = useState()
     const [isLoading, setIsLoading] = useState(true)
     const [selectedClientUID, setSelectedClientUID] = useState<any>()
-    const { clients, loadMore: loadMoreClients } = useClientPages(companyUID, refreshUID, dbURL, isLoading, setIsLoading)
+    const { clients, loadMore: loadMoreClients, hasMore: hasMoreClients } = useClientPages(companyUID, refreshUID, dbURL, isLoading, setIsLoading)
+    // Search looks clients up on the server, so it finds ones Load more hasn't reached yet
+    const [searchQuery, setSearchQuery] = useState('')
+    const { results: searchResults, isSearching } = useClientSearch(searchQuery, companyUID, refreshUID, dbURL)
+    const isSearchActive = searchQuery.trim() !== ''
+    const listedClients: any[] = isSearchActive ? searchResults : clients
     const company: any = useCompany(companyUID, stripeInfo, true, refreshUID, dbURL)
     const companySettings: any = useCompanySettings(companyUID, 'clients', refreshUID, true, dbURL)
     const companyTripSettings: any = useCompanySettings(companyUID, 'trips', refreshUID, true, dbURL)
@@ -267,13 +274,34 @@ const Organizer: FC<Props> = ({ companyUID }) => {
                                 memberCount={ company?.allActiveRoles?.length ?? 0 }
                                 handleModalOpen={ handleModalOpen }
                                 handleToolTipOpen={ handleToolTipOpen }>
+                                <SearchField value={ searchQuery } onChange={ setSearchQuery } label='Search clients' placeholder='Search by name or phone' isSearching={ isSearching }/>
                                 <ColumnsButton companySettings={ companySettings } handleToolTipOpen={ handleToolTipOpen }/>
+                                {
+                                    (isSearchActive && !isSearching) &&
+                                        <p aria-live='polite' className='text-sm text-ink-500'>
+                                            { searchResults.length === 1 ? '1 match' : `${searchResults.length} matches` }
+                                            { searchResults.length >= CLIENT_SEARCH_LIMIT && ` · showing the first ${CLIENT_SEARCH_LIMIT}, keep typing to narrow it down` }
+                                        </p>
+                                }
                             </WorkspacePageHeader>
 
                             <div className='relative min-h-0 grow'>
                                 {
                                     (isLoading) ?
                                         <ListSkeleton label='Loading clients…' showAvatar/>
+                                    : (isSearchActive && listedClients.length === 0) ?
+                                        isSearching ?
+                                            <ListSkeleton label='Searching clients…' showAvatar/>
+                                        :
+                                            <EmptyState
+                                                icon={ <SearchX aria-hidden="true" strokeWidth={1.75}/> }
+                                                title={ `No clients match “${searchQuery.trim()}”` }
+                                                description='Search by first or last name, or by the start or last 7 digits of a phone number.'
+                                                action={
+                                                    <Button variant='secondary' onClick={ () => setSearchQuery('') } className='h-10 px-4'>
+                                                        Clear search
+                                                    </Button>
+                                                }/>
                                     : (clients.length === 0) ?
                                         <EmptyState
                                             icon={ <Contact aria-hidden="true" strokeWidth={1.75}/> }
@@ -287,10 +315,10 @@ const Organizer: FC<Props> = ({ companyUID }) => {
                                     :
                                         // List pads itself 50px per side; [&>div]:!px-8 lines the table up with the header above it.
                                         <div className='h-full overflow-auto pt-4 [&>div]:!px-8'>
-                                            <List name='clients' data={ clients } loadMoreData={ loadMoreData } companyInfo={ company } companySettings={ companySettings } showHeaders={ true } reloadData={ reloadData } popperTrigger={ popperTrigger } popperTriggers={ popperTriggers } isToolTipOpen={ isToolTipOpen } setIsToolTipOpen={ setIsToolTipOpen } selectedData={ selectedData } setSelectedData={ setSelectedData } selectedItem={ selectedItem } sortDirection2={ sortDirection } setSortDirection2={ setSortDirection } sortSectionUID2={ sortSectionUID } setSortSectionUID2={ setSortSectionUID } boardUID={ companyUID } itemSpecs={ itemSpecs } setItemSpecs={ setItemSpecs } handleToolTipOpen={ handleToolTipOpen } dbURL={ dbURL }>
+                                            <List name='clients' data={ listedClients } loadMoreData={ loadMoreData } showLoadMore={ !isSearchActive && hasMoreClients } companyInfo={ company } companySettings={ companySettings } showHeaders={ true } reloadData={ reloadData } popperTrigger={ popperTrigger } popperTriggers={ popperTriggers } isToolTipOpen={ isToolTipOpen } setIsToolTipOpen={ setIsToolTipOpen } selectedData={ selectedData } setSelectedData={ setSelectedData } selectedItem={ selectedItem } sortDirection2={ sortDirection } setSortDirection2={ setSortDirection } sortSectionUID2={ sortSectionUID } setSortSectionUID2={ setSortSectionUID } boardUID={ companyUID } itemSpecs={ itemSpecs } setItemSpecs={ setItemSpecs } handleToolTipOpen={ handleToolTipOpen } dbURL={ dbURL }>
                                                 {
-                                                    SortListData(clients, sortSectionUID, sortDirection).map((item: any, i: any) => (
-                                                        <ClientCell key={ item.id } index={ i } name='clients' item={ item } allClients={ clients } allEmployees={ employees } showHeaders={ true } headerTitles={ HeaderTitles(companySettings, true) } onPress={ cellPressed } itemSpecs={ itemSpecs }/>
+                                                    SortListData(listedClients, sortSectionUID, sortDirection).map((item: any, i: any) => (
+                                                        <ClientCell key={ item.id } index={ i } name='clients' item={ item } allClients={ listedClients } allEmployees={ employees } showHeaders={ true } headerTitles={ HeaderTitles(companySettings, true) } onPress={ cellPressed } itemSpecs={ itemSpecs }/>
                                                     ))
                                                 }
                                             </List>

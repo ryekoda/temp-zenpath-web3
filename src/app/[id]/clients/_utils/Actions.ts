@@ -25,13 +25,9 @@ export function FormData(name: any, data: any, companySettings: any) {
     
         if (name === 'edit') {
           if (!value2) {
-            if (i === 1) {
-              value2 = data.position
-            } else if (i === 2) {
-              value2 = data.phone
-            } else if (i === 3) {
-              value2 = ParseDate(data.dateHired) ?? ''
-            }
+            // Older clients stored these under plain names
+            const legacyValues: Record<string, any> = { '72260': data.phone, '59737': data.address, '27966': ParseDate(data.dob) ?? '', '92085': data.disability }
+            value2 = legacyValues[header.uid] ?? value2
           } else {
             if (header.type === 'date') {
               value2 = ParseDate(data[header.uid]) ?? ''

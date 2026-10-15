@@ -1,10 +1,10 @@
 "use client"
-import { FC } from 'react';
+import { FC, useRef } from 'react';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { ChevronLeft, ChevronRight, User, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Loader2, Search, User, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { CapitalizeFirstLetterOfEachWord } from '@/lib/format/text';
 import { GetDriverNameFromUID } from '@/lib/workspace/members';
@@ -84,3 +84,51 @@ export const DriverFilter: FC<DriverFilterProps> = ({ drivers, selectedDriverUID
 }
 
 export const ToolbarDivider = () => <span aria-hidden="true" className='mx-1 hidden h-6 w-px bg-line sm:block'/>
+
+
+interface SearchFieldProps {
+    value: string
+    onChange: (value: string) => void
+    label: string
+    placeholder?: string
+    // Shows a spinner in place of the search icon while results load
+    isSearching?: boolean
+}
+
+// Toolbar search box. Escape or the clear button empties it.
+export const SearchField: FC<SearchFieldProps> = ({ value, onChange, label, placeholder, isSearching }) => {
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    function clear() {
+        onChange('')
+        inputRef.current?.focus()
+    }
+
+    return (
+        <div role='search' className='relative w-full sm:w-72'>
+            {
+                isSearching ?
+                    <Loader2 aria-hidden="true" className='pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-ink-500'/>
+                :
+                    <Search aria-hidden="true" className='pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-500'/>
+            }
+            <input
+                ref={ inputRef }
+                type='search'
+                value={ value }
+                onChange={ (e) => onChange(e.target.value) }
+                onKeyDown={ (e) => { if (e.key === 'Escape' && value) { e.preventDefault(); clear() } } }
+                aria-label={ label }
+                placeholder={ placeholder }
+                autoComplete='off'
+                spellCheck={ false }
+                className='h-10 w-full rounded-[var(--radius-button)] border border-line bg-white pl-9 pr-9 text-sm text-ink-900 placeholder:text-ink-500 focus:border-brand-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600/30 [&::-webkit-search-cancel-button]:hidden'/>
+            {
+                value &&
+                    <button type='button' onClick={ clear } aria-label='Clear search' className='absolute right-1 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-[var(--radius-button)] text-ink-500 transition-colors duration-200 hover:bg-surface-soft hover:text-ink-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600'>
+                        <X aria-hidden="true" className='h-4 w-4'/>
+                    </button>
+            }
+        </div>
+    )
+}

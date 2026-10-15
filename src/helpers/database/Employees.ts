@@ -48,7 +48,10 @@ export async function GetEmployees(companyUID: string, baseURL: string, lastDoc?
         params: {
             'companyUID': companyUID,
             'userUID': userUID,
-            'lastDoc': lastDoc
+            'lastDoc': lastDoc,
+            // Without a page cursor, get the company's whole roster (rosters are small, and the
+            // driver lists and employee search need everyone)
+            'all': lastDoc ? undefined : true
         }
     })
 

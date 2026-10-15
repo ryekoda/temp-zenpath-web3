@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 
-export async function GetTaggedIndex(category: string, value: any, boardUID: string, baseURL: any) {
+// Items whose name (or, for clients, phone number) starts with `value`. `limit` caps the matches (API default 5, max 50).
+export async function GetTaggedIndex(category: string, value: any, boardUID: string, baseURL: any, limit?: number) {
     const url = baseURL + '/api/tagged-index'
 
     
@@ -9,7 +10,8 @@ export async function GetTaggedIndex(category: string, value: any, boardUID: str
         params: {
             'category': category,
             'value': value, 
-            'boardUID': boardUID
+            'boardUID': boardUID,
+            'limit': limit
         }
     })
 

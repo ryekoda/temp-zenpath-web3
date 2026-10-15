@@ -25,13 +25,9 @@ export function FormData(name: any, data: any, companySettings: any) {
     
         if (name === 'edit') {
           if (!value2) {
-            if (i === 1) {
-              value2 = data.position
-            } else if (i === 2) {
-              value2 = data.phone
-            } else if (i === 3) {
-              value2 = ParseDate(data.dateHired) ?? ''
-            }
+            // Older employees stored these under plain names (matched by column, not position, so reordered columns still work)
+            const legacyValues: Record<string, any> = { '45566': data.position, '23800': data.phone, '44853': ParseDate(data.dateHired) ?? '' }
+            value2 = legacyValues[header.uid] ?? value2
           } else {
             if (header.type === 'date') {
               // console.log('ASDF::: ', data[header.uid]);

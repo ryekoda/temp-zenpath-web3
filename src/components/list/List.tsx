@@ -23,6 +23,8 @@ interface Props {
   name: any
   data: any
   loadMoreData: any
+  // Whether to show Load more; when left out it's guessed from the row count
+  showLoadMore?: boolean
   companyInfo: any
   companySettings: any
   allUsers?: any
@@ -53,7 +55,7 @@ interface Props {
   handleModalOpen?: any
 }
 
-const List: React.FC<Props> = ({ children, name, data, loadMoreData, companyInfo, companySettings, allUsers, allClients, allEmployees, onTap, editButtonPressed, showHeaders, reloadData, popperTrigger, popperTriggers, isToolTipOpen, setIsToolTipOpen, selectedData, setSelectedData, selectedItem, sortDirection2, setSortDirection2, sortSectionUID2, setSortSectionUID2, allDrivers, boardUID, itemSpecs, setItemSpecs, showModal, handleToolTipOpen, dbURL, handleModalOpen }) => {
+const List: React.FC<Props> = ({ children, name, data, loadMoreData, showLoadMore, companyInfo, companySettings, allUsers, allClients, allEmployees, onTap, editButtonPressed, showHeaders, reloadData, popperTrigger, popperTriggers, isToolTipOpen, setIsToolTipOpen, selectedData, setSelectedData, selectedItem, sortDirection2, setSortDirection2, sortSectionUID2, setSortSectionUID2, allDrivers, boardUID, itemSpecs, setItemSpecs, showModal, handleToolTipOpen, dbURL, handleModalOpen }) => {
   const [sortDirection, setSortDirection] = useState(name === 'history' ? 'down' : 'default')
   const [sortSectionUID, setSortSectionUID] = useState(name === 'history' ? '16538' : '')
   const filteredTitles = ( titles: any ) => { return titles }
@@ -148,7 +150,7 @@ const List: React.FC<Props> = ({ children, name, data, loadMoreData, companyInfo
                   (name !== 'trips') &&
                     <div className='flex justify-center py-4'>
                       {
-                        IsLoadMoreAvailable(data.length) &&
+                        (showLoadMore ?? IsLoadMoreAvailable(data.length)) &&
                           <Button variant='secondary' onClick={ loadMoreData } className='h-10 px-5'>
                             Load more
                           </Button>

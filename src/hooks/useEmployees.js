@@ -11,7 +11,9 @@ export default function useEmployees(companyUID, position, lastDoc, refreshUID, 
     if (isGranted) {
       (async () => {
         const employeesData = await GetEmployees(companyUID, dbURL, lastDoc).catch((err) => console.log('employees error: ', err)); 
-        setEmployees(lastDoc ? oldEmployees => [...oldEmployees, ...employeesData] : employeesData);
+        if (employeesData) {
+          setEmployees(lastDoc ? oldEmployees => [...oldEmployees, ...employeesData] : employeesData);
+        }
         if (typeof isLoading === 'boolean') setIsLoading(false)
       })();  
     }
